@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,21 +9,36 @@ export default function Navbar() {
   const { cart, isCartOpen, toastMessage, openCart, closeCart, removeFromCart } = useCart();
   const total = cart.reduce((acc, item) => acc + item.price, 0);
 
+  // NUEVO: Estado para saber si el usuario ha hecho scroll
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
-      <nav className="bg-[#050505]/95 backdrop-blur-md border-b-2 border-[#FF6600] sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+      {/* NAVBAR DINÁMICO */}
+      <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${isScrolled ? 'bg-[#050505]/85 backdrop-blur-xl border-b-2 border-[#FF6600] py-2 shadow-[0_10px_30px_rgba(0,0,0,0.8)]' : 'bg-transparent py-4 border-b-2 border-transparent'}`}>
+        <div className="container mx-auto px-4 flex justify-between items-center">
           
-          {/* LOGO - CORREGIDO PARA QUE SE VEA PERFECTO */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-               {/* Usamos width y height explícitos y object-contain para no recortarlo */}
                <Image 
                  src="/logo.png" 
                  alt="GlobalKeySteam Logo" 
-                 width={45} 
-                 height={45} 
-                 className="object-contain drop-shadow-[0_0_12px_rgba(255,102,0,0.6)]"
+                 width={isScrolled ? 40 : 45} // Se hace un poquito más pequeño al bajar
+                 height={isScrolled ? 40 : 45} 
+                 className="object-contain drop-shadow-[0_0_12px_rgba(255,102,0,0.6)] transition-all duration-300"
                  priority
                />
             </div>
@@ -31,7 +47,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* BOTÓN DEL CARRITO */}
           <div className="flex items-center gap-4 md:gap-6">
             <button className="relative group p-2" onClick={openCart}>
               <svg xmlns="http://www.w3.org/2000/svg" className="text-white group-hover:text-[#FF6600] transition-colors w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,7 +62,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* NOTIFICACIÓN ANIMADA CUANDO AGREGAS UN JUEGO AL CARRITO */}
+      {/* NOTIFICACIÓN ANIMADA */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div

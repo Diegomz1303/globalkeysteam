@@ -27,8 +27,12 @@ export default function LoginPage() {
       if (res.ok) {
         // Guardamos el token en la memoria del navegador
         localStorage.setItem('adminToken', data.token);
-        // Redirigimos al panel de control
-        router.push('/admin');
+        
+        // Guardamos en Cookie para que el Middleware proteja la ruta
+        document.cookie = `adminToken=${data.token}; path=/; max-age=${8 * 60 * 60}; SameSite=Strict`;
+        
+        // SOLUCIÓN: Usamos replace en lugar de push para que el login no quede en el historial
+        router.replace('/admin');
       } else {
         setError(data.error || 'Error al iniciar sesión');
       }

@@ -26,7 +26,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
-      router.push('/admin/login');
+      // Usamos replace también aquí por seguridad
+      router.replace('/admin/login');
     } else {
       setIsAuthenticated(true);
       fetchGames();
@@ -45,7 +46,10 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
-    router.push('/admin/login');
+    document.cookie = "adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    
+    // SOLUCIÓN: Usamos replace para que no puedan "volver atrás" al panel estando deslogueados
+    router.replace('/admin/login');
   };
 
   // --- LÓGICA DE FILTRADO Y PAGINACIÓN ---
@@ -209,7 +213,6 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-1 px-2">
                       {[...Array(totalPages)].map((_, i) => {
                         const pageNum = i + 1;
-                        // Mostrar solo páginas cercanas a la actual
                         if (pageNum === 1 || pageNum === totalPages || (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)) {
                           return (
                             <button

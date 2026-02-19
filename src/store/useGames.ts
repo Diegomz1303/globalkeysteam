@@ -14,25 +14,29 @@ export interface Game {
   cpu?: string | null;
   ram?: string | null;
   gpu?: string | null;
+  genre: string;     // <-- Aseguramos que estén para los filtros
+  platform: string;  // <-- Aseguramos que estén para los filtros
 }
 
 interface GamesStore {
   games: Game[];
+  isLoading: boolean; // <-- NUEVO: Para controlar el Skeleton Loader
   fetchGames: () => Promise<void>;
-  // Las demás funciones se conectarán a la BD en el siguiente paso si lo deseas
 }
 
 export const useGames = create<GamesStore>((set) => ({
   games: [],
+  isLoading: true, // Empieza cargando por defecto
   
-  // ¡ESTA ES LA MAGIA! Llama a tu Backend real
   fetchGames: async () => {
+    set({ isLoading: true }); // Activamos el loader al empezar a buscar
     try {
       const response = await fetch('/api/games');
       const data = await response.json();
-      set({ games: data });
+      set({ games: data, isLoading: false }); // Desactivamos el loader al terminar
     } catch (error) {
       console.error("Error cargando juegos desde la base de datos:", error);
+      set({ isLoading: false });
     }
   }
 }));

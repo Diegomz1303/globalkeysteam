@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react'; //
+import { useEffect, useState } from 'react'; 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -7,7 +7,7 @@ import { useCart } from '../../store/useCart';
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
-  const [isOrderSent, setIsOrderSent] = useState(false); //
+  const [isOrderSent, setIsOrderSent] = useState(false); 
   const router = useRouter();
   const total = cart.reduce((acc, item) => acc + item.price, 0);
 
@@ -19,12 +19,15 @@ export default function CheckoutPage() {
   }, [cart.length, router, isOrderSent]);
 
   const handleWhatsApp = () => {
-    const listaJuegos = cart.map((j) => `- ${j.title} (S/ ${j.price.toFixed(2)})`).join('\n');
-    const mensaje = encodeURIComponent(
-      `¡Hola GlobalKeySteam! 🎮\nQuiero pagar mi pedido:\n\n${listaJuegos}\n\n*TOTAL: S/ ${total.toFixed(2)}*`
-    );
-    window.open(`https://wa.me/555391912151?text=${mensaje}`, '_blank');
-    setIsOrderSent(true); // Cambiamos al modo de confirmación
+    // Construcción de un mensaje de WhatsApp súper profesional
+    const listaJuegos = cart.map((j) => `🎮 *${j.title}* - S/ ${j.price.toFixed(2)}`).join('\n');
+    const mensajeTexto = `¡Hola GlobalKeySteam! 👋\nQuiero pagar mi pedido:\n\n${listaJuegos}\n\n💰 *TOTAL A PAGAR: S/ ${total.toFixed(2)}*\n\n¿A qué cuenta deposito? 🚀`;
+    
+    const mensajeCodificado = encodeURIComponent(mensajeTexto);
+    
+    // RECUERDA CAMBIAR EL 51999999999 POR TU NÚMERO REAL CON CÓDIGO DE PAÍS
+    window.open(`https://wa.me/51999999999?text=${mensajeCodificado}`, '_blank');
+    setIsOrderSent(true); 
   };
 
   const handleFinish = () => {
@@ -43,7 +46,10 @@ export default function CheckoutPage() {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             Volver a la tienda
           </Link>
-          <div className="text-sm text-gray-500 font-medium">Pago Seguro y Entrega Digital</div>
+          <div className="text-sm text-gray-500 font-medium flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Pago Seguro y Entrega Digital
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -85,12 +91,12 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between text-gray-400 text-sm">
                     <span>Comisiones</span>
-                    <span className="text-green-500">Gratis</span>
+                    <span className="text-green-500 font-bold">Gratis</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-end mb-8">
-                  <span className="text-gray-300 font-medium">Total</span>
+                  <span className="text-gray-300 font-medium">Total Final</span>
                   <span className="text-3xl font-black text-[#FF6600] tracking-tight">S/ {total.toFixed(2)}</span>
                 </div>
 
@@ -99,7 +105,7 @@ export default function CheckoutPage() {
                   className="w-full bg-[#FF6600] hover:bg-orange-600 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-[0_5px_20px_rgba(255,102,0,0.2)] mb-4"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                  FINALIZAR COMPRA
+                  COMPRAR POR WHATSAPP
                 </button>
               </>
             ) : (
@@ -107,9 +113,9 @@ export default function CheckoutPage() {
                 <div className="w-16 h-16 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
                   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h3 className="text-xl font-black mb-2">Pedido Enviado</h3>
+                <h3 className="text-xl font-black mb-2">Pedido Generado</h3>
                 <p className="text-gray-400 text-sm mb-8 leading-relaxed">
-                  Si ya nos escribiste por WhatsApp, puedes limpiar tu carrito y volver a la tienda para seguir navegando.
+                  Si ya nos enviaste el mensaje por WhatsApp, puedes limpiar tu carrito y volver a la tienda.
                 </p>
                 <button 
                   onClick={handleFinish}
@@ -126,8 +132,8 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <p className="text-[11px] text-gray-500 text-center leading-relaxed">
-              Serás redirigido a WhatsApp de forma segura para coordinar tu pago y recibir tu llave digital.
+            <p className="text-[11px] text-gray-500 text-center leading-relaxed mt-4">
+              Serás redirigido a WhatsApp de forma segura para coordinar tu pago y recibir tu llave digital al instante.
             </p>
           </div>
         </div>
