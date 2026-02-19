@@ -1,6 +1,8 @@
 "use client";
-import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { useCart } from '../store/useCart';
+import { useGames } from '../store/useGames';
+import GameCard from './GameCard'; // Reutilizamos el card para relacionados
 
 interface GameModalProps {
   juego: any;
@@ -8,11 +10,23 @@ interface GameModalProps {
 }
 
 export default function GameModal({ juego, onClose }: GameModalProps) {
-  // Convertimos el texto de screenshots en un Array real
-  // Si es un string "url1,url2", lo separa. Si ya es array, lo deja. Si es vacío, da []
+  const addToCart = useCart((state) => state.addToCart);
+  const { games } = useGames();
+
+  // Lógica de Juegos Relacionados (mismo género, excluyendo el actual)
+  const relacionados = games
+    .filter((g) => g.genre === juego.genre && g.id !== juego.id)
+    .slice(0, 3);
+
   const screenshots = typeof juego.screenshots === 'string' 
     ? juego.screenshots.split(',').filter((s: string) => s.trim() !== "") 
     : (Array.isArray(juego.screenshots) ? juego.screenshots : []);
+
+  // Mock de opiniones (en un futuro esto vendría de tu DB)
+  const reviews = [
+    { id: 1, user: "AlexGamer", stars: 5, text: "¡Increíble! Recibí la clave en menos de 5 minutos." },
+    { id: 2, user: "Marta_99", stars: 4, text: "Todo perfecto, muy confiable." }
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -39,7 +53,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
 
         <div className="p-8 lg:p-12 -mt-20 relative z-10">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Info Izquierda */}
             <div className="flex-1">
               <span className="bg-[#FF6600] text-black font-black px-3 py-1 rounded text-xs uppercase mb-4 inline-block tracking-widest">
                 {juego.region}
@@ -52,10 +65,9 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                 {/* REQUISITOS */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-800">
                   <div>
-                    <h4 className="text-white font-bold mb-3 uppercase text-sm tracking-widest text-[#FF6600]">Requisitos Mínimos</h4>
-                    <ul className="space-y-2 text-sm">
+                    <h4 className="text-white font-bold mb-3 uppercase text-sm tracking-widest text-[#FF6600]">Requisitos</h4>
+                    <ul className="space-y-1 text-sm">
                       <li><strong className="text-gray-300">OS:</strong> {juego.os || 'Windows 10'}</li>
-                      <li><strong className="text-gray-300">CPU:</strong> {juego.cpu || 'I5 8va Gen'}</li>
                       <li><strong className="text-gray-300">RAM:</strong> {juego.ram || '8GB'}</li>
                       <li><strong className="text-gray-300">GPU:</strong> {juego.gpu || 'GTX 1050'}</li>
                     </ul>
@@ -68,32 +80,62 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               </div>
             </div>
 
-            {/* Sidebar Derecho Comprar */}
             <div className="lg:w-80 h-fit bg-[#121212] border border-gray-800 p-6 rounded-3xl sticky top-0">
               <div className="mb-6">
                 <p className="text-gray-500 text-sm font-bold uppercase mb-1">Precio Total</p>
                 <h3 className="text-4xl font-black text-[#FF6600]">S/ {juego.price.toFixed(2)}</h3>
               </div>
-              <button className="w-full bg-[#FF6600] hover:bg-orange-600 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-orange-500/20 active:scale-95 mb-4">
+              <button 
+                onClick={() => addToCart(juego)}
+                className="w-full bg-[#FF6600] hover:bg-orange-600 text-white font-black py-4 rounded-2xl transition-all shadow-lg active:scale-95 mb-4"
+              >
                 AÑADIR AL CARRITO
               </button>
-              <div className="text-center">
-                <span className="text-xs text-green-500 font-bold flex items-center justify-center gap-1 uppercase">
-                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                   Entrega Inmediata
-                </span>
-              </div>
             </div>
           </div>
 
-          {/* GALERÍA DE SCREENSHOTS CORREGIDA */}
+          {/* SECCIÓN DE SCREENSHOTS */}
           {screenshots.length > 0 && (
             <div className="mt-12">
               <h4 className="text-white font-bold mb-6 uppercase text-sm tracking-widest">Capturas de Pantalla</h4>
               <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
                 {screenshots.map((img: string, i: number) => (
-                  <div key={i} className="relative w-64 h-36 flex-shrink-0 rounded-2xl overflow-hidden border border-gray-800 hover:border-[#FF6600] transition-all cursor-zoom-in group">
-                    <img src={img} alt={`Screenshot ${i}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div key={i} className="relative w-64 h-36 flex-shrink-0 rounded-2xl overflow-hidden border border-gray-800">
+                    <img src={img} alt="screenshot" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* NUEVA SECCIÓN: OPINIONES */}
+          <div className="mt-12 pt-12 border-t border-gray-800">
+            <h4 className="text-white font-bold mb-8 uppercase text-sm tracking-widest">Opiniones de Compradores</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {reviews.map(rev => (
+                <div key={rev.id} className="bg-[#121212] p-6 rounded-2xl border border-gray-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex text-[#FF6600]">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < rev.stars ? "opacity-100" : "opacity-30"}>★</span>
+                      ))}
+                    </div>
+                    <span className="text-white font-bold text-sm">{rev.user}</span>
+                  </div>
+                  <p className="text-gray-400 text-sm italic">"{rev.text}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* NUEVA SECCIÓN: RELACIONADOS */}
+          {relacionados.length > 0 && (
+            <div className="mt-12 pt-12 border-t border-gray-800">
+              <h4 className="text-white font-bold mb-8 uppercase text-sm tracking-widest">También te podría gustar</h4>
+              <div className="space-y-4">
+                {relacionados.map(rel => (
+                  <div key={rel.id} className="scale-90 origin-left">
+                     <GameCard juego={rel} onClick={() => {}} />
                   </div>
                 ))}
               </div>

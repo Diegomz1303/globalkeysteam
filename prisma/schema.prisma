@@ -1,20 +1,20 @@
+// src/prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" 
-  // ¡Fíjate que aquí ya NO está la línea de la url!
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// TABLA DE USUARIOS ADMINISTRADORES
 model Admin {
   id       Int    @id @default(autoincrement())
   usuario  String @unique
-  clave    String
+  clave    String // Ahora guardará el hash de bcrypt
 }
 
-// TABLA DE JUEGOS
 model Game {
   id          Int      @id @default(autoincrement())
   title       String
@@ -29,4 +29,6 @@ model Game {
   cpu         String?
   ram         String?
   gpu         String?
+  genre       String   @default("Acción") // Campo sincronizado
+  platform    String   @default("Steam")  // Nuevo campo para plataforma
 }

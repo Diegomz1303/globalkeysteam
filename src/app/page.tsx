@@ -11,9 +11,11 @@ export default function Home() {
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const { games, fetchGames } = useGames();
   
-  // Estados para filtros
+  // --- ESTADOS PARA FILTROS ACTUALIZADOS ---
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('Todos');
+  const [priceRange, setPriceRange] = useState('all'); // Nuevo filtro de precio
+  const [selectedPlatform, setSelectedPlatform] = useState('Todos'); // Nuevo filtro de plataforma
 
   // --- LÓGICA DE PAGINACIÓN ---
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,16 +25,29 @@ export default function Home() {
     fetchGames();
   }, [fetchGames]);
 
-  // Resetear a la página 1 cuando se busca o cambia de género
+  // Resetear a la página 1 cuando cambie CUALQUIER filtro
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedGenre]);
+  }, [searchQuery, selectedGenre, priceRange, selectedPlatform]);
 
-  // Filtrado de juegos
+  // --- LÓGICA DE FILTRADO AVANZADA ---
   const filteredGames = games.filter((game) => {
+    // 1. Filtro por búsqueda
     const matchSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // 2. Filtro por género
     const matchGenre = selectedGenre === 'Todos' || game.genre === selectedGenre;
-    return matchSearch && matchGenre;
+    
+    // 3. Filtro por plataforma
+    const matchPlatform = selectedPlatform === 'Todos' || game.platform === selectedPlatform;
+    
+    // 4. Filtro por rango de precio
+    let matchPrice = true;
+    if (priceRange === '20') matchPrice = game.price < 20;
+    else if (priceRange === '50') matchPrice = game.price >= 20 && game.price <= 50;
+    else if (priceRange === 'plus') matchPrice = game.price > 50;
+
+    return matchSearch && matchGenre && matchPlatform && matchPrice;
   });
 
   // Cálculo de juegos por página
@@ -73,7 +88,11 @@ export default function Home() {
             searchQuery={searchQuery} 
             setSearchQuery={setSearchQuery} 
             selectedGenre={selectedGenre} 
-            setSelectedGenre={setSelectedGenre} 
+            setSelectedGenre={setSelectedGenre}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            selectedPlatform={selectedPlatform}
+            setSelectedPlatform={setSelectedPlatform}
           />
         </div>
 
@@ -125,7 +144,6 @@ export default function Home() {
               <div className="flex gap-2">
                 {[...Array(totalPages)].map((_, i) => {
                   const page = i + 1;
-                  // Mostrar solo algunas páginas si hay demasiadas
                   if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
                     return (
                       <button

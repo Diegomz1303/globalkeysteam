@@ -1,56 +1,103 @@
 "use client";
+import { useState, useEffect } from 'react';
 
 interface SidebarProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedGenre: string;
   setSelectedGenre: (genre: string) => void;
+  priceRange: string;
+  setPriceRange: (range: string) => void;
+  selectedPlatform: string;
+  setSelectedPlatform: (platform: string) => void;
 }
 
-export default function Sidebar({ searchQuery, setSearchQuery, selectedGenre, setSelectedGenre }: SidebarProps) {
+export default function Sidebar({ 
+  searchQuery, setSearchQuery, 
+  selectedGenre, setSelectedGenre,
+  priceRange, setPriceRange,
+  selectedPlatform, setSelectedPlatform
+}: SidebarProps) {
+  const [localQuery, setLocalQuery] = useState(searchQuery);
   const generos = ['Todos', 'Acción', 'Aventura', 'RPG', 'Estrategia', 'Shooter', 'Deportes', 'Terror', 'Indie'];
+  const plataformas = ['Todos', 'Steam', 'Epic Games', 'Ubisoft Connect', 'Origin', 'Battle.net'];
+  const precios = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Menos de S/ 20', value: '20' },
+    { label: 'S/ 20 - S/ 50', value: '50' },
+    { label: 'Más de S/ 50', value: 'plus' },
+  ];
+
+  useEffect(() => {
+    const handler = setTimeout(() => setSearchQuery(localQuery), 300);
+    return () => clearTimeout(handler);
+  }, [localQuery, setSearchQuery]);
 
   return (
-    <aside className="w-full lg:w-72 flex-shrink-0 p-6 bg-[#121212] rounded-2xl border border-gray-800/50 shadow-2xl shadow-black/50">
+    <aside className="w-full lg:w-72 flex-shrink-0 p-6 bg-[#121212] rounded-2xl border border-gray-800/50 shadow-2xl">
       
-      {/* BUSCADOR INTERACTIVO */}
-      <div className="mb-10">
-        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-sm flex items-center gap-2">
+      {/* BUSCADOR */}
+      <div className="mb-8">
+        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2">
           <span className="text-[#FF6600]">🔍</span> Buscar Juego
         </h3>
-        <div className="relative group">
-          <input 
-            type="text" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Ej: Elden Ring..." 
-            className="w-full bg-black/50 border-2 border-gray-800 text-white rounded-xl px-4 py-3 pl-10 focus:border-[#FF6600] focus:ring-2 focus:ring-[#FF6600]/20 focus:outline-none transition-all duration-300 placeholder-gray-500 group-hover:border-gray-700"
-          />
-          <svg className="w-5 h-5 text-gray-500 absolute left-3 top-3.5 group-focus-within:text-[#FF6600] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input 
+          type="text" 
+          value={localQuery}
+          onChange={(e) => setLocalQuery(e.target.value)}
+          placeholder="Ej: Elden Ring..." 
+          className="w-full bg-black/50 border-2 border-gray-800 text-white rounded-xl px-4 py-3 focus:border-[#FF6600] outline-none transition-all placeholder-gray-500"
+        />
+      </div>
+
+      {/* FILTRO POR PLATAFORMA */}
+      <div className="mb-8">
+        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
+          <span className="text-[#FF6600]">🖥️</span> Plataforma
+        </h3>
+        <select 
+          value={selectedPlatform}
+          onChange={(e) => setSelectedPlatform(e.target.value)}
+          className="w-full bg-black/50 border-2 border-gray-800 text-white rounded-xl px-4 py-2 focus:border-[#FF6600] outline-none cursor-pointer"
+        >
+          {plataformas.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </div>
+
+      {/* FILTRO POR PRECIO */}
+      <div className="mb-8">
+        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
+          <span className="text-[#FF6600]">💰</span> Rango de Precio
+        </h3>
+        <div className="space-y-2">
+          {precios.map((p) => (
+            <button 
+              key={p.value}
+              onClick={() => setPriceRange(p.value)}
+              className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all ${priceRange === p.value ? 'bg-[#FF6600] text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* CATEGORÍAS INTERACTIVAS */}
-      <div className="mb-10">
-        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-sm border-b border-gray-800 pb-2 flex items-center gap-2">
+      {/* GÉNEROS */}
+      <div>
+        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
           <span className="text-[#FF6600]">🎮</span> Géneros
         </h3>
-        <ul className="space-y-1">
+        <div className="flex flex-wrap gap-2">
           {generos.map((cat) => (
-            <li key={cat}>
-              <button 
-                onClick={() => setSelectedGenre(cat)}
-                className={`w-full text-left px-4 py-2.5 rounded-lg font-medium transition-all duration-300 ${
-                  selectedGenre === cat 
-                  ? 'bg-[#FF6600] text-white shadow-[0_0_15px_rgba(255,102,0,0.3)]' 
-                  : 'text-gray-400 hover:text-white hover:bg-[#FF6600]/10 hover:border-l-4 hover:border-[#FF6600]'
-                }`}
-              >
-                {cat}
-              </button>
-            </li>
+            <button 
+              key={cat}
+              onClick={() => setSelectedGenre(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${selectedGenre === cat ? 'bg-[#FF6600] text-white' : 'bg-black/50 text-gray-400 border border-gray-800 hover:border-gray-600'}`}
+            >
+              {cat}
+            </button>
           ))}
-        </ul>
+        </div>
       </div>
 
     </aside>
