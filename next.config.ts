@@ -4,9 +4,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'shared.akamai.steamstatic.com', // Servidor de imágenes de Steam
-        pathname: '**',
+        protocol: "https",
+        hostname: "**", // El doble asterisco significa "Cualquier página de internet"
+      },
+      {
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },
