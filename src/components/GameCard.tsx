@@ -1,62 +1,85 @@
 "use client";
-import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useCart } from '../store/useCart';
-import { useWishlist } from '../store/useWishlist';
+import { useCurrency } from '../store/useCurrency';
 
-export default function GameCard({ juego, onClick }: { juego: any, onClick: () => void }) {
-  const addToCart = useCart((state) => state.addToCart);
-  const { toggleWishlist, isInWishlist } = useWishlist();
-  const liked = isInWishlist(juego.id);
-  
-  const isOutOfStock = (juego.stock || 0) <= 0; // Validación de stock
-  const discount = juego.oldPrice ? Math.round(((juego.oldPrice - juego.price) / juego.oldPrice) * 100) : 0;
+interface GameCardProps {
+  juego: any;
+  onClick: () => void;
+}
+
+export default function GameCard({ juego, onClick }: GameCardProps) {
+  // TRAEMOS LA MONEDA Y EL FORMATEADOR
+  const { formatPrice, currency } = useCurrency();
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-      onClick={!isOutOfStock ? onClick : undefined} 
-      className={`group flex flex-col md:flex-row bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden transition-all duration-500 mb-4 shadow-xl ${isOutOfStock ? 'opacity-60 grayscale' : 'hover:border-[#FF6600] cursor-pointer'}`}
+    <div 
+      onClick={onClick}
+      className="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden cursor-pointer group hover:border-[#FF6600] transition-colors shadow-lg flex flex-col md:flex-row items-stretch"
     >
-      <div className="relative w-full md:w-64 h-56 md:h-auto flex-shrink-0 bg-black">
-        <Image src={juego.image} alt={juego.title} fill className="object-cover opacity-90" />
-        
-        {isOutOfStock && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-            <span className="bg-red-600 text-white font-black px-4 py-2 rounded-lg text-sm uppercase tracking-tighter">AGOTADO</span>
-          </div>
-        )}
-
-        <button 
-          onClick={(e) => { e.stopPropagation(); toggleWishlist(juego); }}
-          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md z-20 ${liked ? 'bg-[#FF6600] text-white' : 'bg-black/40 text-gray-400'}`}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        </button>
-      </div>
-      
-      <div className="flex-1 p-6 flex flex-col justify-center border-b md:border-b-0 md:border-r border-gray-800 relative">
-        <h3 className="text-2xl font-black text-white mb-3 line-clamp-2">{juego.title}</h3>
-        <div className="flex flex-wrap gap-3">
-          <span className="bg-black/60 px-3 py-1.5 rounded-full border border-gray-700 text-[10px] font-bold text-gray-300 uppercase">{juego.platform || 'Steam'}</span>
-          {!isOutOfStock && <span className="text-green-500 text-[10px] font-bold uppercase">Disponibilidad Inmediata</span>}
+      <div className="relative w-full md:w-64 h-56 md:h-auto flex-shrink-0 overflow-hidden bg-black">
+        <img 
+          src={juego.image} 
+          alt={juego.title} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
+        />
+        <div className="absolute top-3 left-3 flex gap-2">
+          <span className="bg-[#FF6600] text-black text-[10px] font-black uppercase px-2 py-1 rounded shadow-lg">
+            {juego.region}
+          </span>
+          {juego.stock > 0 ? (
+            <span className="bg-green-500 text-black text-[10px] font-black uppercase px-2 py-1 rounded shadow-lg">
+              En Stock
+            </span>
+          ) : (
+             <span className="bg-red-500 text-black text-[10px] font-black uppercase px-2 py-1 rounded shadow-lg">
+              Agotado
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="w-full md:w-56 p-6 flex flex-col justify-center items-end bg-[#0a0a0a]">
-        <div className="text-right mb-4">
-            <div className="text-4xl font-black text-white tracking-tighter">S/ {juego.price.toFixed(2)}</div>
+      <div className="flex-1 p-6 flex flex-col justify-center">
+        <p className="text-[#FF6600] text-xs font-black uppercase tracking-widest mb-2">{juego.genre || 'Acción'}</p>
+        <h3 className="text-xl md:text-2xl font-black text-white mb-2 line-clamp-2 group-hover:text-[#FF6600] transition-colors">
+          {juego.title}
+        </h3>
+        <p className="text-gray-500 text-sm font-medium line-clamp-2 mb-4">
+          {juego.description}
+        </p>
+        <div className="flex items-center gap-2 mt-auto">
+          <span className="text-xs font-bold text-gray-400 bg-gray-900 px-3 py-1 rounded-full">{juego.platform || 'Steam'}</span>
         </div>
-        
-        <button 
-          disabled={isOutOfStock}
-          onClick={(e) => { e.stopPropagation(); addToCart(juego); }}
-          className={`w-full font-black py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 ${isOutOfStock ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-[#FF6600] text-white active:scale-95 shadow-lg shadow-orange-500/20'}`}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-          <span>{isOutOfStock ? 'SIN STOCK' : 'AÑADIR'}</span>
+      </div>
+
+      <div className="w-full md:w-56 bg-black/40 p-6 flex flex-row md:flex-col justify-between md:justify-center items-center md:items-end border-t md:border-t-0 md:border-l border-gray-800">
+        <div className="text-left md:text-right mb-0 md:mb-4">
+          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1 hidden md:block">Precio final</p>
+          
+          {/* ANIMACIÓN DEL PRECIO AL CAMBIAR DE MONEDA */}
+          <motion.h4 
+            key={currency} // Esto hace que la animación se dispare al cambiar la moneda
+            initial={{ opacity: 0, scale: 0.8, y: -10 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            className="text-2xl md:text-3xl font-black text-white"
+          >
+            {formatPrice(juego.price)}
+          </motion.h4>
+
+          {juego.oldPrice && (
+            <motion.p 
+              key={`old-${currency}`}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className="text-gray-600 line-through font-bold text-sm"
+            >
+              {formatPrice(juego.oldPrice)}
+            </motion.p>
+          )}
+        </div>
+        <button className="bg-white group-hover:bg-[#FF6600] text-black group-hover:text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wide transition-all duration-300 flex items-center gap-2">
+          Ver Oferta
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

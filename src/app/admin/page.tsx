@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGames } from '../../store/useGames';
+import { useCurrency } from '../../store/useCurrency'; // NUEVO IMPORT PARA LA MONEDA
 
 import AdminSidebar from '../admin/AdminSidebar';
 import GameFormModal from '../admin/GameFormModal';
@@ -12,6 +13,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { games, fetchGames } = useGames();
+  const { formatPrice, currency } = useCurrency(); // TRAEMOS LA MONEDA Y EL FORMATEADOR
   
   const [activeTab, setActiveTab] = useState<'dashboard' | 'productos'>('productos');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -174,7 +176,16 @@ export default function AdminDashboard() {
                             <p className="text-[10px] text-gray-500 uppercase font-black">{juego.genre || 'General'}</p>
                           </div>
                         </div>
-                        <div className="col-span-3 sm:col-span-2 font-black text-[#FF6600]">S/ {juego.price.toFixed(2)}</div>
+                        
+                        {/* APLICAMOS EL FORMATO AL PRECIO EN EL PANEL ADMIN TAMBIÉN */}
+                        <motion.div 
+                          key={currency} 
+                          initial={{ opacity: 0 }} animate={{ opacity: 1 }} 
+                          className="col-span-3 sm:col-span-2 font-black text-[#FF6600]"
+                        >
+                          {formatPrice(juego.price)}
+                        </motion.div>
+
                         <div className="col-span-2 hidden sm:block font-bold text-gray-400">{juego.stock || 0} u.</div>
                         <div className="col-span-4 sm:col-span-2 flex justify-center gap-2">
                           <button onClick={() => openEditModal(juego)} className="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl hover:bg-blue-500 hover:text-white transition-all shadow-sm" title="Editar">

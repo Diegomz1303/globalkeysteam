@@ -3,15 +3,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { useCart } from '../../store/useCart';
+import { useCurrency } from '../../store/useCurrency'; // NUEVO IMPORT
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
+  const { formatPrice, currency } = useCurrency(); // TRAEMOS LA MONEDA
+  
   const [isOrderSent, setIsOrderSent] = useState(false); 
   const router = useRouter();
   const total = cart.reduce((acc, item) => acc + item.price, 0);
 
-  // REDIRECCIÓN AUTOMÁTICA SOLO SI NO ESTAMOS EN EL PASO DE CONFIRMACIÓN
   useEffect(() => {
     if (cart.length === 0 && !isOrderSent) {
       router.push('/');
@@ -19,19 +22,19 @@ export default function CheckoutPage() {
   }, [cart.length, router, isOrderSent]);
 
   const handleWhatsApp = () => {
-    // Construcción de un mensaje de WhatsApp súper profesional
-    const listaJuegos = cart.map((j) => `🎮 *${j.title}* - S/ ${j.price.toFixed(2)}`).join('\n');
-    const mensajeTexto = `¡Hola GlobalKeySteam! 👋\nQuiero pagar mi pedido:\n\n${listaJuegos}\n\n💰 *TOTAL A PAGAR: S/ ${total.toFixed(2)}*\n\n¿A qué cuenta deposito? 🚀`;
+    // EL MENSAJE DE WHATSAPP AHORA TOMA LA MONEDA FORMATEADA
+    const listaJuegos = cart.map((j) => `🎮 *${j.title}* - ${formatPrice(j.price)}`).join('\n');
+    const mensajeTexto = `¡Hola GlobalKeySteam! 👋\nQuiero pagar mi pedido:\n\n${listaJuegos}\n\n💰 *TOTAL A PAGAR: ${formatPrice(total)}*\n\n¿A qué cuenta deposito? 🚀`;
     
     const mensajeCodificado = encodeURIComponent(mensajeTexto);
     
-    // RECUERDA CAMBIAR EL 51999999999 POR TU NÚMERO REAL CON CÓDIGO DE PAÍS
-    window.open(`https://wa.me/51999999999?text=${mensajeCodificado}`, '_blank');
+    // RECUERDA CAMBIAR EL 51999999999 POR TU NÚMERO DE WHATSAPP REAL
+    window.open(`https://wa.me/555391912151?text=${mensajeCodificado}`, '_blank');
     setIsOrderSent(true); 
   };
 
   const handleFinish = () => {
-    clearCart(); // Ahora sí limpiamos el carrito
+    clearCart(); 
     router.push('/');
   };
 
@@ -41,7 +44,7 @@ export default function CheckoutPage() {
     <main className="min-h-screen bg-[#050505] text-white py-8 px-4 selection:bg-[#FF6600]">
       <div className="container mx-auto max-w-5xl">
         
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-800/60">
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-800/60 mt-16">
           <Link href="/" className="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm font-medium">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             Volver a la tienda
@@ -58,7 +61,7 @@ export default function CheckoutPage() {
               {isOrderSent ? "¡Casi listo!" : "Resumen de tu pedido"}
             </h2>
             
-            <div className="bg-[#121212] rounded-2xl border border-gray-800/60 overflow-hidden">
+            <div className="bg-[#121212] rounded-2xl border border-gray-800/60 overflow-hidden shadow-lg">
               {cart.map((juego, index) => (
                 <div key={juego.id} className={`flex items-center gap-4 p-4 md:p-6 ${index !== cart.length - 1 ? 'border-b border-gray-800/60' : ''}`}>
                   <div className="relative w-24 h-14 md:w-32 md:h-20 rounded-lg overflow-hidden flex-shrink-0 border border-gray-800">
@@ -72,22 +75,26 @@ export default function CheckoutPage() {
                        <span className="text-green-500 text-[10px] md:text-xs font-bold uppercase tracking-wider">Entrega Instantánea</span>
                     </div>
                   </div>
-                  <div className="text-xl font-bold text-white">
-                    S/ {juego.price.toFixed(2)}
-                  </div>
+                  <motion.div 
+                    key={currency} // Animación al cambiar moneda
+                    initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
+                    className="text-xl md:text-2xl font-black text-[#FF6600]"
+                  >
+                    {formatPrice(juego.price)}
+                  </motion.div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-[#121212] border border-gray-800/60 rounded-2xl p-6 lg:p-8 sticky top-24 shadow-xl">
+          <div className="bg-[#121212] border border-gray-800/60 rounded-2xl p-6 lg:p-8 sticky top-24 shadow-2xl">
             {!isOrderSent ? (
               <>
                 <h2 className="text-lg font-bold text-white mb-6">Total a pagar</h2>
                 <div className="space-y-3 mb-6 border-b border-gray-800/60 pb-6">
                   <div className="flex justify-between text-gray-400 text-sm">
                     <span>Subtotal ({cart.length} items)</span>
-                    <span>S/ {total.toFixed(2)}</span>
+                    <motion.span key={currency} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{formatPrice(total)}</motion.span>
                   </div>
                   <div className="flex justify-between text-gray-400 text-sm">
                     <span>Comisiones</span>
@@ -97,7 +104,13 @@ export default function CheckoutPage() {
 
                 <div className="flex justify-between items-end mb-8">
                   <span className="text-gray-300 font-medium">Total Final</span>
-                  <span className="text-3xl font-black text-[#FF6600] tracking-tight">S/ {total.toFixed(2)}</span>
+                  <motion.span 
+                    key={currency}
+                    initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                    className="text-3xl md:text-4xl font-black text-white tracking-tight"
+                  >
+                    {formatPrice(total)}
+                  </motion.span>
                 </div>
 
                 <button 
@@ -133,7 +146,7 @@ export default function CheckoutPage() {
             )}
 
             <p className="text-[11px] text-gray-500 text-center leading-relaxed mt-4">
-              Serás redirigido a WhatsApp de forma segura para coordinar tu pago y recibir tu llave digital al instante.
+              Serás redirigido a WhatsApp de forma segura para coordinar tu pago.
             </p>
           </div>
         </div>

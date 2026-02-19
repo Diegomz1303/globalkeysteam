@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { useCart } from '../store/useCart';
 import { useGames } from '../store/useGames';
+import { useCurrency } from '../store/useCurrency'; // NUEVO IMPORT
 import GameCard from './GameCard'; 
 
 interface GameModalProps {
@@ -12,8 +13,9 @@ interface GameModalProps {
 export default function GameModal({ juego, onClose }: GameModalProps) {
   const addToCart = useCart((state) => state.addToCart);
   const { games } = useGames();
+  const { formatPrice } = useCurrency(); // TRAEMOS EL FORMATEADOR
 
-  // Lógica de Juegos Relacionados (mismo género, excluyendo el actual)
+  // Lógica de Juegos Relacionados
   const relacionados = games
     .filter((g) => g.genre === juego.genre && g.id !== juego.id)
     .slice(0, 3);
@@ -22,7 +24,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
     ? juego.screenshots.split(',').filter((s: string) => s.trim() !== "") 
     : (Array.isArray(juego.screenshots) ? juego.screenshots : []);
 
-  // Mock de opiniones (en un futuro esto vendría de tu DB)
   const reviews = [
     { id: 1, user: "AlexGamer", stars: 5, text: "¡Increíble! Recibí la clave en menos de 5 minutos." },
     { id: 2, user: "Marta_99", stars: 4, text: "Todo perfecto, muy confiable." }
@@ -47,7 +48,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
         <div className="relative h-72 md:h-[450px] w-full group overflow-hidden">
           <img src={juego.image} alt={juego.title} className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700" />
           
-          {/* Gradientes para fundir la imagen con el fondo oscuro */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-transparent" />
           
@@ -75,14 +75,13 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               <div className="space-y-8 text-gray-400 leading-relaxed">
                 <p className="text-lg font-medium">{juego.description}</p>
                 
-                {/* REQUISITOS DEL SISTEMA (DISEÑO PREMIUM TARJETAS) */}
+                {/* REQUISITOS DEL SISTEMA */}
                 <div className="pt-8">
                   <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 bg-[#FF6600] rounded-full"></span>
                     Requisitos del Sistema (PC)
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {/* Tarjeta OS */}
                     <div className="bg-[#121212] border border-gray-800 rounded-2xl p-4 flex flex-col items-center text-center gap-3 hover:border-[#FF6600]/50 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                       <div>
@@ -90,7 +89,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                         <p className="text-white text-sm font-bold mt-0.5">{juego.os || 'Windows 10'}</p>
                       </div>
                     </div>
-                    {/* Tarjeta CPU */}
                     <div className="bg-[#121212] border border-gray-800 rounded-2xl p-4 flex flex-col items-center text-center gap-3 hover:border-[#FF6600]/50 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
                       <div>
@@ -98,7 +96,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                         <p className="text-white text-sm font-bold mt-0.5">{juego.cpu || 'Intel Core i5'}</p>
                       </div>
                     </div>
-                    {/* Tarjeta RAM */}
                     <div className="bg-[#121212] border border-gray-800 rounded-2xl p-4 flex flex-col items-center text-center gap-3 hover:border-[#FF6600]/50 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="10" x2="4" y2="14"/><line x1="20" y1="10" x2="20" y2="14"/><rect x="8" y="4" width="8" height="16" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
                       <div>
@@ -106,7 +103,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                         <p className="text-white text-sm font-bold mt-0.5">{juego.ram || '8 GB RAM'}</p>
                       </div>
                     </div>
-                    {/* Tarjeta GPU */}
                     <div className="bg-[#121212] border border-gray-800 rounded-2xl p-4 flex flex-col items-center text-center gap-3 hover:border-[#FF6600]/50 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" ry="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>
                       <div>
@@ -125,10 +121,11 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                 <div className="mb-6 text-center">
                   <p className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-2">Precio Total</p>
                   <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FF6600] to-orange-400">
-                    S/ {juego.price.toFixed(2)}
+                    {/* USAMOS EL FORMATO AQUÍ */}
+                    {formatPrice(juego.price)}
                   </h3>
                   {juego.oldPrice && (
-                     <p className="text-gray-600 line-through font-bold text-lg mt-1">S/ {juego.oldPrice.toFixed(2)}</p>
+                     <p className="text-gray-600 line-through font-bold text-lg mt-1">{formatPrice(juego.oldPrice)}</p>
                   )}
                 </div>
                 
@@ -154,7 +151,7 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
             </div>
           </div>
 
-          {/* SECCIÓN DE SCREENSHOTS */}
+          {/* SCREENSHOTS */}
           {screenshots.length > 0 && (
             <div className="mt-16 pt-8 border-t border-gray-800/60">
               <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
@@ -172,7 +169,7 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
             </div>
           )}
 
-          {/* SECCIÓN: OPINIONES */}
+          {/* OPINIONES */}
           <div className="mt-16 pt-8 border-t border-gray-800/60">
             <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 bg-[#FF6600] rounded-full"></span>
@@ -195,7 +192,7 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
             </div>
           </div>
 
-          {/* SECCIÓN: RELACIONADOS */}
+          {/* RELACIONADOS */}
           {relacionados.length > 0 && (
             <div className="mt-16 pt-8 border-t border-gray-800/60">
               <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
