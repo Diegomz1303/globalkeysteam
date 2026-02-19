@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+  // ¡Fíjate que aquí ya NO está la línea de la url!
+}
+
+// TABLA DE USUARIOS ADMINISTRADORES
+model Admin {
+  id       Int    @id @default(autoincrement())
+  usuario  String @unique
+  clave    String
+}
+
+// TABLA DE JUEGOS
+model Game {
+  id          Int      @id @default(autoincrement())
+  title       String
+  price       Float
+  oldPrice    Float?
+  region      String   @default("GLOBAL")
+  stock       Int      @default(0)
+  image       String
+  description String   @db.Text
+  screenshots String   @db.Text
+  os          String?
+  cpu         String?
+  ram         String?
+  gpu         String?
+}

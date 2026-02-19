@@ -1,19 +1,27 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import GameCard from '../components/GameCard';
 import GameModal from '../components/GameModal';
-import { useGames } from '../store/useGames'; // Importamos el catálogo global
+import { useGames } from '../store/useGames';
 
 export default function Home() {
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const { games } = useGames(); // Extraemos los juegos de la memoria
+  
+  // Extraemos los juegos y la función para traerlos de la base de datos
+  const { games, fetchGames } = useGames();
+
+  // Esto hace que la página busque los juegos en tu base de datos apenas cargue
+  useEffect(() => {
+    fetchGames();
+  }, [fetchGames]);
 
   return (
     <main className="min-h-screen font-sans selection:bg-[#FF6600] selection:text-white pb-16 relative">
       <Navbar />
 
+      {/* RENDERIZAMOS EL MODAL SI HAY UN JUEGO SELECCIONADO */}
       {selectedGame && (
         <GameModal juego={selectedGame} onClose={() => setSelectedGame(null)} />
       )}
@@ -43,17 +51,23 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* LISTA DINÁMICA DE JUEGOS */}
+          {/* LISTA DINÁMICA DE JUEGOS DESDE LA BASE DE DATOS */}
           <div className="space-y-4">
-            {games.map((juego) => (
-              <GameCard 
-                key={juego.id}
-                juego={juego}
-                onClick={() => setSelectedGame(juego)}
-              />
-            ))}
-            {games.length === 0 && (
-               <div className="text-center py-20 text-gray-500">No hay juegos disponibles en este momento.</div>
+            {games.length === 0 ? (
+              // Mensaje elegante si tu base de datos está vacía
+              <div className="text-center py-20 bg-[#121212] border border-gray-800 rounded-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 text-gray-600"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                <p className="text-xl font-bold text-gray-400 mb-2">Catálogo vacío</p>
+                <p className="text-sm text-gray-500">Aún no hay juegos en la base de datos. ¡Agrega algunos!</p>
+              </div>
+            ) : (
+              games.map((juego) => (
+                <GameCard 
+                  key={juego.id}
+                  juego={juego}
+                  onClick={() => setSelectedGame(juego)}
+                />
+              ))
             )}
           </div>
         </div>

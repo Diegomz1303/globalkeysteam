@@ -1,3 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-orange: #FF6600;
+  --color-brand-dark: #050505;
+  --color-brand-card: #121212;
+  --color-brand-gray: #1A1A1A;
+}
+
+@layer base {
+  body {
+    background-color: #050505;
+    color: #ffffff;
+  }
+}
+
+/* Animaciones suaves para toda la página */
+html {
+  scroll-behavior: smooth;
+}

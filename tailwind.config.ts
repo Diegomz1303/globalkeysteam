@@ -2,18 +2,16 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    // Estas rutas deben coincidir EXACTAMENTE con tu estructura de carpetas
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}" // Línea de seguridad extra
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        'brand-orange': '#FF6600',
-        'brand-dark': '#0F0F0F',
-        'brand-gray': '#1A1A1A',
+        brand: {
+          orange: "#FF6600",
+          dark: "#050505",
+          card: "#121212",
+        },
       },
     },
   },
