@@ -1,15 +1,18 @@
 import { Pool } from 'pg';
 
-// Esto crea una "piscina" de conexiones directas a tu base de datos
+// Esta configuración es compatible tanto con Local como con Vercel/Neon
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Esto permite que se conecte a Neon sin problemas de certificados
+  }
 });
 
-// Verificamos si la conexión es exitosa (opcional, pero genial para saber que funciona)
-pool.connect((err) => {
+// Prueba de conexión rápida en consola
+pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    console.error('❌ Error conectando a PostgreSQL', err.stack);
+    console.error('❌ Error conectando a PostgreSQL en la nube:', err.stack);
   } else {
-    console.log('✅ Conectado a PostgreSQL exitosamente con pg');
+    console.log('✅ Conexión exitosa a la base de datos en la nube:', res.rows[0].now);
   }
 });
