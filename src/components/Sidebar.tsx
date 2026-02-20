@@ -20,7 +20,6 @@ export default function Sidebar({
 }: SidebarProps) {
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const generos = ['Todos', 'Acción', 'Aventura', 'RPG', 'Estrategia', 'Shooter', 'Deportes', 'Terror', 'Indie'];
-  const plataformas = ['Todos', 'Steam', 'Epic Games', 'Ubisoft Connect', 'Origin', 'Battle.net'];
   const precios = [
     { label: 'Todos', value: 'all' },
     { label: 'Menos de S/ 20', value: '20' },
@@ -48,20 +47,6 @@ export default function Sidebar({
           placeholder="Ej: Elden Ring..." 
           className="w-full bg-black/50 border-2 border-gray-800 text-white rounded-xl px-4 py-3 focus:border-[#FF6600] outline-none transition-all placeholder-gray-500"
         />
-      </div>
-
-      {/* FILTRO POR PLATAFORMA */}
-      <div className="mb-8">
-        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
-          <span className="text-[#FF6600]">🖥️</span> Plataforma
-        </h3>
-        <select 
-          value={selectedPlatform}
-          onChange={(e) => setSelectedPlatform(e.target.value)}
-          className="w-full bg-black/50 border-2 border-gray-800 text-white rounded-xl px-4 py-2 focus:border-[#FF6600] outline-none cursor-pointer"
-        >
-          {plataformas.map(p => <option key={p} value={p}>{p}</option>)}
-        </select>
       </div>
 
       {/* FILTRO POR PRECIO */}

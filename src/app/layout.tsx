@@ -6,6 +6,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 // METADATOS PROFESIONALES PARA SEO Y REDES SOCIALES
 export const metadata: Metadata = {
+  // 👇 AQUÍ ESTÁ LA LÍNEA NUEVA QUE SOLUCIONA EL WARNING
+  metadataBase: new URL("https://globalkeysteam.com"), // Cambia esto por tu dominio real cuando lo tengas
+  
   title: "GlobalKeySteam - Steam Keys al Instante",
   description: "La tienda de Steam Keys más rápida y segura de Latinoamérica. Juegos de PC baratos y entrega inmediata 24/7.",
   openGraph: {

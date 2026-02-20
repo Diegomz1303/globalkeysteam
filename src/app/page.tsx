@@ -4,13 +4,15 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import GameCard from '../components/GameCard';
 import GameModal from '../components/GameModal';
-import Footer from '../components/Footer'; // NUEVA IMPORTACIÓN
+import Footer from '../components/Footer'; 
 import { useGames } from '../store/useGames';
+import { useCurrency } from '../store/useCurrency';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const { games, fetchGames, isLoading } = useGames();
+  const { formatPrice } = useCurrency(); 
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('Todos');
@@ -103,17 +105,19 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent z-10"></div>
 
                   <div className="absolute inset-0 z-20 flex items-center justify-between p-6 md:p-16">
-                    <div className="w-full md:w-1/2 flex flex-col items-start justify-end h-full md:justify-center">
+                    
+                    {/* TEXTO (Z-INDEX SUPERIOR PARA QUE ESTÉ POR DELANTE EN MÓVIL) */}
+                    <div className="w-full md:w-1/2 flex flex-col items-start justify-end h-full md:justify-center relative z-20 pb-4 md:pb-0">
                       <motion.span 
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                         className="bg-[#FF6600] text-white text-[10px] md:text-xs font-black uppercase px-4 py-1.5 rounded-full mb-4 tracking-wider shadow-[0_0_15px_rgba(255,102,0,0.5)]"
                       >
-                        🔥 DESTACADO DE LA SEMANA
+                        🔥 DESTACADO
                       </motion.span>
                       
                       <motion.h2 
                         initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
-                        className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-2xl line-clamp-2"
+                        className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-2xl line-clamp-2 max-w-[80%] md:max-w-full"
                       >
                         {featuredGames[currentSlide].title}
                       </motion.h2>
@@ -123,11 +127,11 @@ export default function Home() {
                         className="flex items-center gap-4 mb-8"
                       >
                         <span className="text-3xl md:text-4xl font-black text-[#FF6600] drop-shadow-lg">
-                          S/ {featuredGames[currentSlide].price.toFixed(2)}
+                          {formatPrice(featuredGames[currentSlide].price)}
                         </span>
                         {featuredGames[currentSlide].oldPrice && (
                           <span className="text-gray-400 line-through font-bold text-xl">
-                            S/ {featuredGames[currentSlide].oldPrice.toFixed(2)}
+                            {formatPrice(featuredGames[currentSlide].oldPrice)}
                           </span>
                         )}
                       </motion.div>
@@ -142,15 +146,16 @@ export default function Home() {
                       </motion.button>
                     </div>
                     
+                    {/* IMAGEN DEL BANNER (AHORA VISIBLE EN MÓVIL TAMBIÉN) */}
                     <motion.div 
                       initial={{ opacity: 0, scale: 0.8, rotate: -5 }} 
                       animate={{ opacity: 1, scale: 1, rotate: 2 }} 
                       transition={{ delay: 0.2, type: "spring" }}
-                      className="hidden md:block w-5/12 h-full py-4"
+                      className="absolute right-[-10px] top-6 w-[130px] h-[180px] opacity-80 md:opacity-100 md:relative md:right-0 md:top-0 md:w-5/12 md:h-full md:py-4 z-10"
                     >
                        <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-white/10 group-hover:rotate-0 group-hover:scale-105 transition-all duration-700 ease-out cursor-pointer" onClick={() => setSelectedGame(featuredGames[currentSlide])}>
                           <img src={featuredGames[currentSlide].image} alt="Cover" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 md:from-black/60 to-transparent"></div>
                        </div>
                     </motion.div>
                   </div>
@@ -324,7 +329,6 @@ export default function Home() {
         </div>
       </div>
       
-      {/* AÑADIMOS EL FOOTER AL FINAL */}
       <Footer />
     </main>
   );

@@ -12,7 +12,8 @@ export default function GameFormModal({ onClose, onSuccess, gameToEdit }: GameFo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '', price: '', region: 'GLOBAL', stock: '10', image: '', description: '', os: '', cpu: '', ram: '', gpu: '', 
-    genre: 'Acción' // Añadimos el género por defecto
+    genre: 'Acción', // Añadimos el género por defecto
+    platform: 'Steam' // <--- AÑADIDO: Plataforma por defecto para evitar undefined
   });
 
   // Si nos pasan un juego para editar, llenamos el formulario
@@ -29,7 +30,8 @@ export default function GameFormModal({ onClose, onSuccess, gameToEdit }: GameFo
         cpu: gameToEdit.cpu || '', 
         ram: gameToEdit.ram || '', 
         gpu: gameToEdit.gpu || '',
-        genre: gameToEdit.genre || 'Acción' // Cargamos el género si existe
+        genre: gameToEdit.genre || 'Acción', // Cargamos el género si existe
+        platform: gameToEdit.platform || 'Steam' // <--- AÑADIDO: Cargamos la plataforma si existe
       });
     }
   }, [gameToEdit]);

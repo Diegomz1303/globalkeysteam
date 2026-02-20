@@ -18,6 +18,7 @@ function verificarToken(req: Request) {
 // CORRECCIÓN AQUÍ: params ahora es de tipo Promise<{ id: string }>
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!verificarToken(req)) return NextResponse.json({ error: "Acceso denegado" }, { status: 401 });
+  
   try {
     // Await params es obligatorio en las nuevas versiones de Next.js
     const resolvedParams = await params;
@@ -30,16 +31,21 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
           description = $6, os = $7, cpu = $8, ram = $9, gpu = $10, genre = $11, platform = $12
       WHERE id = $13 RETURNING *
     `;
+    
+    // Aquí añadimos los "|| null" y "|| 'Steam'" para evitar errores de undefined en PostgreSQL
     const values = [
       body.title, body.price, body.region, body.stock, body.image, 
-      body.description, body.os, body.cpu, body.ram, body.gpu, 
-      body.genre, body.platform, parseInt(id)
+      body.description, body.os || null, body.cpu || null, body.ram || null, body.gpu || null, 
+      body.genre || 'Acción', body.platform || 'Steam', parseInt(id)
     ];
 
     const result = await pool.query(query, values);
     return NextResponse.json(result.rows[0]);
+    
   } catch (error) {
-    return NextResponse.json({ error: "Error al actualizar" }, { status: 500 });
+    // ESTO ES CLAVE: Imprimirá en tu terminal el error real de SQL si algo sale mal
+    console.error("🚨 Error detallado al actualizar juego:", error); 
+    return NextResponse.json({ error: "Error interno al actualizar" }, { status: 500 });
   }
 }
 
@@ -53,6 +59,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     await pool.query('DELETE FROM "Game" WHERE id = $1', [parseInt(id)]);
     return NextResponse.json({ message: "Eliminado" });
   } catch (error) {
+    // También añadimos consola de error aquí para depurar eliminaciones fallidas
+    console.error("🚨 Error detallado al eliminar juego:", error); 
     return NextResponse.json({ error: "Error al eliminar" }, { status: 500 });
   }
 }

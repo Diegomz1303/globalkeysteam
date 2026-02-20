@@ -1,40 +1,36 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface Game {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  genre?: string;
-}
-
-interface WishlistStore {
-  wishlist: Game[];
-  toggleWishlist: (game: Game) => void;
+interface WishlistState {
+  wishlist: any[];
+  toggleWishlist: (juego: any) => void;
   isInWishlist: (id: number) => boolean;
 }
 
-export const useWishlist = create<WishlistStore>()(
+export const useWishlist = create<WishlistState>()(
   persist(
     (set, get) => ({
       wishlist: [],
-      toggleWishlist: (game) => {
+      
+      toggleWishlist: (juego) => {
         const { wishlist } = get();
-        const exists = wishlist.find((item) => item.id === game.id);
+        const exists = wishlist.some((item) => item.id === juego.id);
         
         if (exists) {
-          set({ wishlist: wishlist.filter((item) => item.id !== game.id) });
+          // Si ya está, lo quitamos
+          set({ wishlist: wishlist.filter((item) => item.id !== juego.id) });
         } else {
-          set({ wishlist: [...wishlist, game] });
+          // Si no está, lo agregamos
+          set({ wishlist: [...wishlist, juego] });
         }
       },
+
       isInWishlist: (id) => {
         return get().wishlist.some((item) => item.id === id);
-      },
+      }
     }),
     {
-      name: 'globalkey-wishlist', // Clave en localStorage
+      name: 'wishlist-storage', // Nombre con el que se guarda en el LocalStorage
     }
   )
 );
