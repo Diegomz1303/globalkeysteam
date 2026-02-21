@@ -1,8 +1,51 @@
 "use client";
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Footer() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Lista de términos y condiciones (con el JSX corregido para evitar errores)
+  const terms = [
+    {
+      title: "Producto digital",
+      desc: "Vendemos claves (códigos) originales para activar en Steam.",
+      icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    },
+    {
+      title: "Entrega inmediata",
+      desc: "Tras confirmar el pago, recibirás la clave en cuestión de minutos.",
+      icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    },
+    {
+      title: "Garantía total",
+      desc: "Si no puedes activarlo, te devolvemos el 100 % del importe.",
+      icon: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    },
+    {
+      title: "Sin reembolso tras la activación",
+      desc: "Al tratarse de un producto digital, no aceptamos devoluciones ni cancelaciones una vez que la clave se ha activado correctamente.",
+      icon: <><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></>
+    },
+    {
+      title: "Compatibilidad",
+      desc: "No compatible con Windows 7, Linux, Mac o dispositivos móviles.",
+      icon: <><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></>
+    },
+    {
+      title: "Atención rápida",
+      desc: "Asistencia personalizada a través de WhatsApp o correo electrónico, lista para ayudarte con cualquier duda.",
+      icon: <><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></>
+    },
+    {
+      title: "Acceso de por vida",
+      desc: "El juego permanecerá para siempre en tu biblioteca de Steam, con todos los DLC y actualizaciones.",
+      icon: <><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z"/></>
+    }
+  ];
+
   return (
     <footer className="bg-[#050505] border-t border-gray-800/60 pt-16 pb-8 mt-20 relative overflow-hidden">
       {/* Brillo de fondo para el footer */}
@@ -65,12 +108,88 @@ export default function Footer() {
           <p className="text-gray-600 text-sm font-medium">
             &copy; {new Date().getFullYear()} GlobalKeySteam. Todos los derechos reservados.
           </p>
+          
           <div className="flex gap-6 text-sm font-medium text-gray-600">
-            <span className="hover:text-[#FF6600] cursor-pointer transition-colors">Términos de Servicio</span>
-            <span className="hover:text-[#FF6600] cursor-pointer transition-colors">Política de Reembolso</span>
+            {/* AQUÍ REEMPLAZAMOS LOS DOS SPANS POR EL BOTÓN DEL MODAL */}
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="hover:text-[#FF6600] transition-colors font-medium outline-none"
+            >
+              Términos y Condiciones
+            </button>
           </div>
         </div>
       </div>
+
+      {/* MODAL ANIMADO DE TÉRMINOS Y CONDICIONES */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6">
+            
+            {/* Fondo Oscurecido (Backdrop) */}
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"
+            />
+            
+            {/* Contenedor del Modal */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-2xl bg-[#121212] border border-gray-800 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[85vh] md:max-h-[90vh]"
+            >
+              {/* Cabecera Fija */}
+              <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] sticky top-0 z-10">
+                <h2 className="text-xl md:text-2xl font-black text-white flex items-center gap-3">
+                  <span className="text-[#FF6600] bg-[#FF6600]/10 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </span>
+                  Términos y Condiciones
+                </h2>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-white bg-gray-900 hover:bg-red-500 p-2 rounded-full transition-all outline-none"
+                  aria-label="Cerrar términos"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+
+              {/* Cuerpo del Modal (Scrollable) */}
+              <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar space-y-6">
+                {terms.map((term, index) => (
+                  <div key={index} className="flex gap-4 items-start group">
+                    <div className="bg-gray-900 border border-gray-800 p-3 rounded-xl text-[#FF6600] group-hover:bg-[#FF6600] group-hover:text-white group-hover:border-[#FF6600] transition-all shrink-0 duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        {term.icon}
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold text-lg mb-1 leading-tight">{term.title}</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed font-medium">{term.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Botón Inferior */}
+              <div className="p-6 border-t border-gray-800 bg-[#0a0a0a]">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-full bg-[#FF6600] hover:bg-orange-600 text-white font-black py-4 rounded-xl transition-all active:scale-95 uppercase tracking-wide shadow-lg shadow-orange-500/20 outline-none"
+                >
+                  Entendido
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </footer>
   );
 }
