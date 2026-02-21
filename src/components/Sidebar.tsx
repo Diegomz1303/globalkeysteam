@@ -9,8 +9,6 @@ interface SidebarProps {
   setSearchQuery: (query: string) => void;
   selectedGenre: string;
   setSelectedGenre: (genre: string) => void;
-  priceRange: string;
-  setPriceRange: (range: string) => void;
   selectedPlatform: string;
   setSelectedPlatform: (platform: string) => void;
 }
@@ -18,7 +16,6 @@ interface SidebarProps {
 export default function Sidebar({ 
   searchQuery, setSearchQuery, 
   selectedGenre, setSelectedGenre,
-  priceRange, setPriceRange,
   selectedPlatform, setSelectedPlatform
 }: SidebarProps) {
   const [localQuery, setLocalQuery] = useState(searchQuery);
@@ -29,12 +26,6 @@ export default function Sidebar({
   const { formatPrice } = useCurrency();
 
   const generos = ['Todos', 'Acción', 'Aventura', 'RPG', 'Estrategia', 'Shooter', 'Deportes', 'Terror', 'Indie'];
-  const precios = [
-    { label: 'Todos', value: 'all' },
-    { label: 'Menos de S/ 20', value: '20' },
-    { label: 'S/ 20 - S/ 50', value: '50' },
-    { label: 'Más de S/ 50', value: 'plus' },
-  ];
 
   // Detectar clics fuera del buscador para cerrar las sugerencias
   useEffect(() => {
@@ -55,15 +46,15 @@ export default function Sidebar({
   // Cuando hace clic en una sugerencia
   const handleSelectSuggestion = (title: string) => {
     setLocalQuery(title);
-    setSearchQuery(title); // Aquí es donde le decimos al catálogo que busque
+    setSearchQuery(title); 
     setShowSuggestions(false);
   };
 
   // Cuando presiona "Enter" en el teclado
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      setSearchQuery(localQuery); // Le avisa al catálogo principal
-      setShowSuggestions(false);  // Cierra el menú desplegable
+      setSearchQuery(localQuery); 
+      setShowSuggestions(false);  
     }
   };
 
@@ -84,14 +75,13 @@ export default function Sidebar({
               setLocalQuery(valor);
               setShowSuggestions(true);
               
-              // Si el usuario borra todo el texto, reseteamos el catálogo automáticamente
               if (valor.trim() === '') {
                 setSearchQuery('');
               }
             }}
             onFocus={() => setShowSuggestions(true)}
             onKeyDown={handleKeyDown}
-            placeholder="Ej: Elden Ring... (Presiona Enter)" 
+            placeholder="Ej: Elden Ring..." 
             className="w-full bg-black/50 border-2 border-gray-800 text-white rounded-xl px-4 py-3 focus:border-[#FF6600] outline-none transition-all placeholder-gray-500 relative z-10"
           />
 
@@ -148,35 +138,21 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* FILTRO POR PRECIO */}
-      <div className="mb-8">
-        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
-          <span className="text-[#FF6600]">💰</span> Rango de Precio
-        </h3>
-        <div className="space-y-2">
-          {precios.map((p) => (
-            <button 
-              key={p.value}
-              onClick={() => setPriceRange(p.value)}
-              className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-all ${priceRange === p.value ? 'bg-[#FF6600] text-white shadow-[0_0_15px_rgba(255,102,0,0.3)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* GÉNEROS */}
+      {/* GÉNEROS MEJORADOS */}
       <div>
         <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
-          <span className="text-[#FF6600]">🎮</span> Géneros
+          <span className="text-[#FF6600]">🎮</span> Explora por Género
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2.5">
           {generos.map((cat) => (
             <button 
               key={cat}
               onClick={() => setSelectedGenre(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${selectedGenre === cat ? 'bg-[#FF6600] text-white shadow-[0_0_15px_rgba(255,102,0,0.3)]' : 'bg-black/50 text-gray-400 border border-gray-800 hover:border-gray-600 hover:text-white'}`}
+              className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all duration-300 ${
+                selectedGenre === cat 
+                  ? 'bg-gradient-to-r from-[#FF6600] to-orange-500 text-white shadow-[0_4px_15px_rgba(255,102,0,0.4)] scale-105 border-transparent' 
+                  : 'bg-black/40 text-gray-400 border border-gray-800 hover:border-gray-500 hover:text-white hover:bg-black/60'
+              }`}
             >
               {cat}
             </button>

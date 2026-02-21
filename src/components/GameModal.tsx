@@ -1,24 +1,26 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCart } from '../store/useCart';
 import { useGames } from '../store/useGames';
 import { useCurrency } from '../store/useCurrency';
+import { useCart } from '../store/useCart'; 
 import GameCard from './GameCard'; 
 
 interface GameModalProps {
   juego: any;
   onClose: () => void;
+  // 🚀 NUEVA FUNCIÓN PARA ABRIR JUEGOS RELACIONADOS
+  onSelectRelated: (juego: any) => void; 
 }
 
-export default function GameModal({ juego, onClose }: GameModalProps) {
-  const addToCart = useCart((state) => state.addToCart);
+export default function GameModal({ juego, onClose, onSelectRelated }: GameModalProps) {
+  const router = useRouter();
   const { games } = useGames();
+  const { clearCart, addToCart } = useCart();
   const { formatPrice, currency } = useCurrency();
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  // Estados para la animación de cambio de moneda dentro del modal
   const [isChangingCurrency, setIsChangingCurrency] = useState(false);
   const [prevCurrency, setPrevCurrency] = useState(currency);
 
@@ -49,9 +51,10 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  const handleAddToCart = () => {
-    addToCart(juego);
-    // No llamamos a openCart() para que no se abra la tienda automáticamente
+  const handleBuyNow = () => {
+    clearCart(); 
+    addToCart(juego); 
+    router.push('/checkout'); 
   };
 
   return (
@@ -69,8 +72,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className="relative bg-[#050505] border border-gray-800 w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.8)] custom-scrollbar"
       >
-        
-        {/* Animación de cambio de moneda interna */}
         <AnimatePresence>
           {isChangingCurrency && (
             <motion.div
@@ -100,7 +101,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
 
         <div className="p-6 md:p-12 -mt-32 md:-mt-40 relative z-10">
           <div className="flex flex-col lg:flex-row gap-10">
-            
             <div className="flex-1">
               <div className="flex flex-wrap gap-3 mb-4">
                 <span className="bg-[#FF6600] text-black font-black px-3 py-1 rounded-md text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(255,102,0,0.4)]">
@@ -116,7 +116,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               <div className="space-y-8 text-gray-400 leading-relaxed">
                 <p className="text-lg font-medium">{juego.description}</p>
                 
-                {/* Preguntas Frecuentes */}
                 <div className="pt-8">
                   <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 bg-[#FF6600] rounded-full"></span>
@@ -126,27 +125,15 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                   <div className="space-y-3">
                     {faqs.map((faq, index) => (
                       <div key={index} className="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:border-gray-700">
-                        <button
-                          onClick={() => toggleFaq(index)}
-                          className="w-full text-left px-5 py-4 flex justify-between items-center focus:outline-none"
-                        >
+                        <button onClick={() => toggleFaq(index)} className="w-full text-left px-5 py-4 flex justify-between items-center focus:outline-none">
                           <span className="font-bold text-white text-sm md:text-base pr-4">{faq.q}</span>
-                          <motion.div
-                            animate={{ rotate: openFaq === index ? 180 : 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="flex-shrink-0 text-[#FF6600]"
-                          >
+                          <motion.div animate={{ rotate: openFaq === index ? 180 : 0 }} transition={{ duration: 0.3 }} className="flex-shrink-0 text-[#FF6600]">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                           </motion.div>
                         </button>
                         <AnimatePresence>
                           {openFaq === index && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: "easeInOut" }}
-                            >
+                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }}>
                               <div className="px-5 pb-4 text-gray-400 text-sm leading-relaxed border-t border-gray-800/50 mt-1 pt-3">
                                 {faq.a}
                               </div>
@@ -157,19 +144,18 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                     ))}
                   </div>
                 </div>
-
               </div>
             </div>
 
             <div className="lg:w-[350px] flex-shrink-0">
               <div className="bg-[#121212] border border-gray-800 rounded-3xl p-8 sticky top-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                 <div className="mb-6 text-center">
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-2">Precio Total</p>
-                  <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FF6600] to-orange-400">
+                  <p className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-2">Precio Final</p>
+                  <h3 suppressHydrationWarning className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FF6600] to-orange-400">
                     {formatPrice(juego.price)}
                   </h3>
                   {juego.oldPrice && (
-                     <p className="text-gray-600 line-through font-bold text-lg mt-1">{formatPrice(juego.oldPrice)}</p>
+                     <p suppressHydrationWarning className="text-gray-600 line-through font-bold text-lg mt-1">{formatPrice(juego.oldPrice)}</p>
                   )}
                 </div>
                 
@@ -185,11 +171,11 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                 </div>
 
                 <button 
-                  onClick={handleAddToCart}
+                  onClick={handleBuyNow}
                   className="w-full bg-gradient-to-r from-[#FF6600] to-orange-500 hover:from-orange-500 hover:to-[#FF6600] text-white font-black py-4 rounded-2xl transition-all shadow-[0_0_20px_rgba(255,102,0,0.4)] hover:shadow-[0_0_30px_rgba(255,102,0,0.6)] active:scale-95 flex items-center justify-center gap-2 text-lg"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-                  AÑADIR AL CARRITO
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  COMPRAR AHORA
                 </button>
               </div>
             </div>
@@ -204,7 +190,8 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               <div className="space-y-4">
                 {relacionados.map(rel => (
                   <div key={rel.id} className="transform scale-[0.98] hover:scale-100 origin-left transition-transform">
-                     <GameCard juego={rel} onClick={() => {}} />
+                     {/* 🚀 AQUÍ LE DECIMOS QUÉ HACER CUANDO HAGAN CLIC */}
+                     <GameCard juego={rel} onClick={() => onSelectRelated(rel)} />
                   </div>
                 ))}
               </div>

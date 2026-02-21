@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
-import Image from 'next/image'; // <-- IMPORTAMOS NEXT/IMAGE
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useCurrency } from '../store/useCurrency';
 import { useWishlist } from '../store/useWishlist'; 
@@ -31,7 +31,6 @@ export default function GameCard({ juego, onClick }: GameCardProps) {
       onClick={onClick}
       className="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden cursor-pointer group hover:border-[#FF6600] transition-colors shadow-lg flex flex-col md:flex-row items-stretch relative"
     >
-      {/* CONTENEDOR DE IMAGEN ACTUALIZADO */}
       <div className="relative w-full md:w-64 h-56 md:h-auto min-h-[224px] flex-shrink-0 overflow-hidden bg-black">
         <Image 
           src={juego.image} 
@@ -41,7 +40,6 @@ export default function GameCard({ juego, onClick }: GameCardProps) {
           className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
         />
         
-        {/* ETIQUETAS DE STOCK Y REGIÓN */}
         <div className="absolute top-3 left-3 flex gap-2 z-10">
           <span className="bg-[#FF6600] text-black text-[10px] font-black uppercase px-2 py-1 rounded shadow-lg">
             {juego.region}
@@ -86,11 +84,12 @@ export default function GameCard({ juego, onClick }: GameCardProps) {
       <div className="w-full md:w-56 bg-black/40 p-6 flex flex-row md:flex-col justify-between md:justify-center items-center md:items-end border-t md:border-t-0 md:border-l border-gray-800">
         <div className="text-left md:text-right mb-0 md:mb-4">
           <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1 hidden md:block">Precio final</p>
-          <motion.h4 key={currency} initial={{ opacity: 0, scale: 0.8, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="text-2xl md:text-3xl font-black text-white">
+          {/* AQUÍ ESTÁ LA SOLUCIÓN: suppressHydrationWarning */}
+          <motion.h4 suppressHydrationWarning key={currency} initial={{ opacity: 0, scale: 0.8, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="text-2xl md:text-3xl font-black text-white">
             {formatPrice(juego.price)}
           </motion.h4>
           {juego.oldPrice && (
-            <motion.p key={`old-${currency}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-gray-600 line-through font-bold text-sm">
+            <motion.p suppressHydrationWarning key={`old-${currency}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-gray-600 line-through font-bold text-sm">
               {formatPrice(juego.oldPrice)}
             </motion.p>
           )}

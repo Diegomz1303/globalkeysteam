@@ -13,21 +13,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function HomeClient({ initialGames }: { initialGames: any[] }) {
   const [selectedGame, setSelectedGame] = useState<any>(null);
   
-  // Extraemos estado global
   const { games } = useGames();
   const { formatPrice } = useCurrency(); 
   
-  // Sincronizamos los juegos del servidor con Zustand de inmediato
   useEffect(() => {
     useGames.setState({ games: initialGames, isLoading: false });
   }, [initialGames]);
 
-  // Usamos initialGames mientras Zustand hidrata para evitar parpadeos
   const displayGames = games.length > 0 ? games : initialGames;
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('Todos');
-  const [priceRange, setPriceRange] = useState('all');
   const [selectedPlatform, setSelectedPlatform] = useState('Todos');
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +34,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedGenre, priceRange, selectedPlatform]);
+  }, [searchQuery, selectedGenre, selectedPlatform]);
 
   useEffect(() => {
     if (featuredGames.length <= 1) return;
@@ -52,13 +48,8 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
     const matchSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchGenre = selectedGenre === 'Todos' || game.genre === selectedGenre;
     const matchPlatform = selectedPlatform === 'Todos' || game.platform === selectedPlatform;
-    
-    let matchPrice = true;
-    if (priceRange === '20') matchPrice = game.price < 20;
-    else if (priceRange === '50') matchPrice = game.price >= 20 && game.price <= 50;
-    else if (priceRange === 'plus') matchPrice = game.price > 50;
 
-    return matchSearch && matchGenre && matchPlatform && matchPrice;
+    return matchSearch && matchGenre && matchPlatform;
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -75,8 +66,13 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
     <main className="min-h-screen font-sans selection:bg-[#FF6600] selection:text-white relative bg-[#050505] pt-20">
       <Navbar />
 
+      {/* 🚀 AQUÍ AÑADIMOS LA PROPIEDAD onSelectRelated */}
       {selectedGame && (
-        <GameModal juego={selectedGame} onClose={() => setSelectedGame(null)} />
+        <GameModal 
+          juego={selectedGame} 
+          onClose={() => setSelectedGame(null)} 
+          onSelectRelated={(nuevoJuego) => setSelectedGame(nuevoJuego)} 
+        />
       )}
 
       {/* HERO SECTION CON BANNER ESTILO G2A */}
@@ -132,11 +128,11 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
                         className="flex items-center gap-4 mb-8"
                       >
-                        <span className="text-3xl md:text-4xl font-black text-[#FF6600] drop-shadow-lg">
+                        <span suppressHydrationWarning className="text-3xl md:text-4xl font-black text-[#FF6600] drop-shadow-lg">
                           {formatPrice(featuredGames[currentSlide].price)}
                         </span>
                         {featuredGames[currentSlide].oldPrice && (
-                          <span className="text-gray-400 line-through font-bold text-xl">
+                          <span suppressHydrationWarning className="text-gray-400 line-through font-bold text-xl">
                             {formatPrice(featuredGames[currentSlide].oldPrice)}
                           </span>
                         )}
@@ -201,7 +197,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
             </div>
             <div>
               <h4 className="font-black text-white text-lg leading-tight">Pago 100% Seguro</h4>
-              <p className="text-sm text-gray-500 font-medium">Sin comisiones ocultas</p>
+              <p className="text-sm text-gray-500 font-medium">Transacciones verificadas por Stripe</p>
             </div>
           </div>
 
@@ -224,8 +220,6 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
             setSearchQuery={setSearchQuery} 
             selectedGenre={selectedGenre} 
             setSelectedGenre={setSelectedGenre}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
             selectedPlatform={selectedPlatform}
             setSelectedPlatform={setSelectedPlatform}
           />
