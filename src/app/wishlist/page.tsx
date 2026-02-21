@@ -24,8 +24,13 @@ export default function WishlistPage() {
     <main className="min-h-screen bg-[#050505] font-sans selection:bg-[#FF6600] selection:text-white pt-24 pb-12 flex flex-col">
       <Navbar />
 
+      {/* 🚀 AQUÍ AÑADIMOS LA PROPIEDAD QUE FALTABA (onSelectRelated) */}
       {selectedGame && (
-        <GameModal juego={selectedGame} onClose={() => setSelectedGame(null)} />
+        <GameModal 
+          juego={selectedGame} 
+          onClose={() => setSelectedGame(null)} 
+          onSelectRelated={(nuevoJuego) => setSelectedGame(nuevoJuego)} 
+        />
       )}
 
       <div className="container mx-auto px-4 flex-1 max-w-6xl mt-8">
