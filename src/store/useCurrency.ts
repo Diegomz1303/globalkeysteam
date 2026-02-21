@@ -34,19 +34,15 @@ export const useCurrency = create<CurrencyStore>()(
         }
       },
 
-      // AQUÍ ESTÁ LA CORRECCIÓN
       formatPrice: (price: number) => {
         const { currency } = get();
         
         if (currency === 'PEN') {
-          // El precio ya está en soles en tu base de datos, así que NO lo multiplicamos.
-          // Solo lo devolvemos tal cual con el símbolo S/
           return `S/ ${price.toFixed(2)}`;
         } else {
-          // Si el cliente elige COP (Colombia), convertimos tus Soles a Pesos
-          // 1 Sol equivale a aprox 1050 Pesos Colombianos (Puedes ajustar este 1050 si deseas)
           const priceCOP = price * 1050; 
-          return `$ ${priceCOP.toLocaleString('es-CO')}`;
+          // ¡AQUÍ ESTÁ EL CAMBIO! Agregamos "COP" para diferenciar del Dólar
+          return `COP $ ${priceCOP.toLocaleString('es-CO')}`;
         }
       },
     }),
