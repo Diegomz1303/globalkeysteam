@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Image from 'next/image'; // <-- IMPORTAMOS NEXT/IMAGE
 import { motion } from 'framer-motion';
 import { useCurrency } from '../store/useCurrency';
-import { useWishlist } from '../store/useWishlist'; // <-- NUEVO
+import { useWishlist } from '../store/useWishlist'; 
 
 interface GameCardProps {
   juego: any;
@@ -11,7 +12,7 @@ interface GameCardProps {
 
 export default function GameCard({ juego, onClick }: GameCardProps) {
   const { formatPrice, currency } = useCurrency();
-  const { toggleWishlist, wishlist } = useWishlist(); // <-- NUEVO
+  const { toggleWishlist, wishlist } = useWishlist(); 
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export default function GameCard({ juego, onClick }: GameCardProps) {
   const isWished = mounted ? wishlist.some(item => item.id === juego.id) : false;
 
   const handleHeartClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Evita que al darle al corazón se abra el modal del juego
+    e.stopPropagation(); 
     toggleWishlist(juego);
   };
 
@@ -30,11 +31,14 @@ export default function GameCard({ juego, onClick }: GameCardProps) {
       onClick={onClick}
       className="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden cursor-pointer group hover:border-[#FF6600] transition-colors shadow-lg flex flex-col md:flex-row items-stretch relative"
     >
-      <div className="relative w-full md:w-64 h-56 md:h-auto flex-shrink-0 overflow-hidden bg-black">
-        <img 
+      {/* CONTENEDOR DE IMAGEN ACTUALIZADO */}
+      <div className="relative w-full md:w-64 h-56 md:h-auto min-h-[224px] flex-shrink-0 overflow-hidden bg-black">
+        <Image 
           src={juego.image} 
-          alt={juego.title} 
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
+          alt={juego.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 256px"
+          className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
         />
         
         {/* ETIQUETAS DE STOCK Y REGIÓN */}
@@ -49,7 +53,6 @@ export default function GameCard({ juego, onClick }: GameCardProps) {
           )}
         </div>
 
-        {/* NUEVO: BOTÓN DE WISHLIST FLOTANTE */}
         {mounted && (
           <button 
             onClick={handleHeartClick}
