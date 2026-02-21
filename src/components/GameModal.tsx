@@ -18,21 +18,17 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // 🚀 NUEVOS ESTADOS PARA LA ANIMACIÓN DE CAMBIO DE MONEDA
+  // Estados para la animación de cambio de moneda dentro del modal
   const [isChangingCurrency, setIsChangingCurrency] = useState(false);
   const [prevCurrency, setPrevCurrency] = useState(currency);
 
-  // EFECTO QUE DETECTA CUANDO CAMBIA LA MONEDA
   useEffect(() => {
     if (currency !== prevCurrency) {
       setIsChangingCurrency(true);
-      
-      // La animación dura 1.2 segundos y luego muestra los nuevos precios
       const timer = setTimeout(() => {
         setIsChangingCurrency(false);
         setPrevCurrency(currency);
       }, 1200); 
-      
       return () => clearTimeout(timer);
     }
   }, [currency, prevCurrency]);
@@ -40,10 +36,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
   const relacionados = games
     .filter((g) => g.genre === juego.genre && g.id !== juego.id)
     .slice(0, 3);
-
-  const screenshots = typeof juego.screenshots === 'string' 
-    ? juego.screenshots.split(',').filter((s: string) => s.trim() !== "") 
-    : (Array.isArray(juego.screenshots) ? juego.screenshots : []);
 
   const faqs = [
     { q: "¿Cómo activo mi clave?", a: "Para activar tu clave, abre el cliente Steam, ve a «Juegos» → «Activar un producto en Steam», pega el código de la clave y sigue las instrucciones que aparecen en pantalla." },
@@ -57,10 +49,9 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  // 🛒 AQUÍ ESTÁ EL BOTÓN CORREGIDO (Ya no abre el panel lateral)
   const handleAddToCart = () => {
     addToCart(juego);
-    // Solo se ejecuta addToCart, así solo sale la notificación verde y no interrumpe al cliente
+    // No llamamos a openCart() para que no se abra la tienda automáticamente
   };
 
   return (
@@ -79,13 +70,11 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
         className="relative bg-[#050505] border border-gray-800 w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.8)] custom-scrollbar"
       >
         
-        {/* 🌟 ANIMACIÓN DE CAMBIO DE MONEDA (Se superpone a todo el modal) */}
+        {/* Animación de cambio de moneda interna */}
         <AnimatePresence>
           {isChangingCurrency && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 z-[150] flex flex-col items-center justify-center bg-[#050505]/80 backdrop-blur-md rounded-3xl"
             >
               <motion.div 
@@ -93,18 +82,8 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
                 transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                 className="w-16 h-16 border-4 border-[#FF6600] border-t-transparent rounded-full mb-6 shadow-[0_0_15px_rgba(255,102,0,0.5)]"
               />
-              <motion.h3 
-                initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                className="text-2xl md:text-3xl font-black text-white tracking-widest uppercase text-center drop-shadow-lg"
-              >
-                Actualizando Precios
-              </motion.h3>
-              <motion.p 
-                initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-                className="text-[#FF6600] font-bold mt-3 text-lg"
-              >
-                Calculando en {currency === 'PEN' ? 'Soles (PEN)' : 'Pesos (COP)'}...
-              </motion.p>
+              <h3 className="text-2xl md:text-3xl font-black text-white tracking-widest uppercase text-center">Actualizando Precios</h3>
+              <p className="text-[#FF6600] font-bold mt-3 text-lg">Calculando en {currency === 'PEN' ? 'Soles (PEN)' : 'Pesos (COP)'}...</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -137,7 +116,7 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               <div className="space-y-8 text-gray-400 leading-relaxed">
                 <p className="text-lg font-medium">{juego.description}</p>
                 
-                {/* PREGUNTAS FRECUENTES (En lugar de Requisitos) */}
+                {/* Preguntas Frecuentes */}
                 <div className="pt-8">
                   <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 bg-[#FF6600] rounded-full"></span>
@@ -186,12 +165,9 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               <div className="bg-[#121212] border border-gray-800 rounded-3xl p-8 sticky top-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                 <div className="mb-6 text-center">
                   <p className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-2">Precio Total</p>
-                  
-                  {/* PRECIO CON ANIMACIÓN */}
                   <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FF6600] to-orange-400">
                     {formatPrice(juego.price)}
                   </h3>
-                  
                   {juego.oldPrice && (
                      <p className="text-gray-600 line-through font-bold text-lg mt-1">{formatPrice(juego.oldPrice)}</p>
                   )}
@@ -218,23 +194,6 @@ export default function GameModal({ juego, onClose }: GameModalProps) {
               </div>
             </div>
           </div>
-
-          {screenshots.length > 0 && (
-            <div className="mt-16 pt-8 border-t border-gray-800/60">
-              <h4 className="text-white font-black mb-6 uppercase text-sm tracking-widest flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#FF6600] rounded-full"></span>
-                Capturas de Pantalla
-              </h4>
-              <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
-                {screenshots.map((img: string, i: number) => (
-                  <div key={i} className="relative w-72 h-40 flex-shrink-0 rounded-2xl overflow-hidden border border-gray-800 group cursor-pointer">
-                    <img src={img} alt="screenshot" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {relacionados.length > 0 && (
             <div className="mt-16 pt-8 border-t border-gray-800/60">
