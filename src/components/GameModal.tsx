@@ -10,7 +10,7 @@ import GameCard from './GameCard';
 interface GameModalProps {
   juego: any;
   onClose: () => void;
-  // 🚀 NUEVA FUNCIÓN PARA ABRIR JUEGOS RELACIONADOS
+  
   onSelectRelated: (juego: any) => void; 
 }
 

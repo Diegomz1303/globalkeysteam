@@ -44,16 +44,16 @@ export const useCurrency = create<CurrencyStore>()(
         if (currency === 'PEN') {
           return `S/ ${price.toFixed(2)}`;
         } else {
-          // 🚀 TASA DE CAMBIO EXACTA PARA EL CLIENTE: 33 Soles * 1104.515 = 36449 Pesos Colombianos
+          
           const priceCOP = price * 1104.515; 
           
-          // Redondeamos para quitar los decimales matemáticos (36448.995 se convierte en 36449)
+          
           const roundedCOP = Math.round(priceCOP);
           
-          // Forzamos el punto como separador de miles
+          
           const formattedCOP = roundedCOP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
           
-          // Devolvemos el formato exacto "$36.449 COP"
+          
           return `$${formattedCOP} COP`;
         }
       },

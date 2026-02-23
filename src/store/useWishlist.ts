@@ -17,10 +17,10 @@ export const useWishlist = create<WishlistState>()(
         const exists = wishlist.some((item) => item.id === juego.id);
         
         if (exists) {
-          // Si ya está, lo quitamos
+          
           set({ wishlist: wishlist.filter((item) => item.id !== juego.id) });
         } else {
-          // Si no está, lo agregamos
+          
           set({ wishlist: [...wishlist, juego] });
         }
       },
@@ -30,7 +30,7 @@ export const useWishlist = create<WishlistState>()(
       }
     }),
     {
-      name: 'wishlist-storage', // Nombre con el que se guarda en el LocalStorage
+      name: 'wishlist-storage', 
     }
   )
 );

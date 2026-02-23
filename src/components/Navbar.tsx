@@ -13,7 +13,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
   
-  // 🚀 ESTADO PARA LA ANIMACIÓN GLOBAL DE MONEDA
+  
   const [isChangingCurrency, setIsChangingCurrency] = useState(false);
 
   useEffect(() => {
@@ -41,12 +41,12 @@ export default function Navbar() {
     }
     
     setIsCurrencyMenuOpen(false);
-    setIsChangingCurrency(true); // Enciende la pantalla de carga
+    setIsChangingCurrency(true); 
     
-    // Cambiamos la moneda en el sistema
+    
     setCurrencyManual(newCurrency);
 
-    // Apagamos la pantalla de carga después de 1.2 segundos
+    
     setTimeout(() => {
       setIsChangingCurrency(false);
     }, 1200);
@@ -54,7 +54,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* 🌟 ANIMACIÓN GLOBAL DE CAMBIO DE MONEDA (Cubre toda la pantalla) */}
+      {/* ANIMACIÓN GLOBAL DE CAMBIO DE MONEDA (Cubre toda la pantalla) */}
       <AnimatePresence>
         {isChangingCurrency && (
           <motion.div

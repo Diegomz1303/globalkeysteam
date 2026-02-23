@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { pool } from '../../../lib/db';
 
-// OBTENER RESEÑAS DE UN JUEGO (GET)
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const gameId = searchParams.get('gameId');
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    // Obtenemos las reseñas ordenadas de la más nueva a la más antigua
+    
     const query = `SELECT * FROM "Review" WHERE "gameId" = $1 ORDER BY "createdAt" DESC`;
     const result = await pool.query(query, [parseInt(gameId)]);
     
@@ -22,13 +22,13 @@ export async function GET(req: Request) {
   }
 }
 
-// CREAR UNA NUEVA RESEÑA (POST)
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { gameId, user, stars, text } = body;
 
-    // Validación básica
+    
     if (!gameId || !user || !stars || !text) {
       return NextResponse.json({ error: "Todos los campos son obligatorios" }, { status: 400 });
     }

@@ -14,7 +14,7 @@
   }
 }
 
-/* Animaciones suaves para toda la página */
+
 html {
   scroll-behavior: smooth;
 }

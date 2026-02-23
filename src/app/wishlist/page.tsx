@@ -13,7 +13,7 @@ export default function WishlistPage() {
   const [mounted, setMounted] = useState(false);
   const [selectedGame, setSelectedGame] = useState<any>(null);
 
-  // Evitar error de hidratación
+  
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -24,7 +24,7 @@ export default function WishlistPage() {
     <main className="min-h-screen bg-[#050505] font-sans selection:bg-[#FF6600] selection:text-white pt-24 pb-12 flex flex-col">
       <Navbar />
 
-      {/* 🚀 AQUÍ AÑADIMOS LA PROPIEDAD QUE FALTABA (onSelectRelated) */}
+      {/* (onSelectRelated) */}
       {selectedGame && (
         <GameModal 
           juego={selectedGame} 

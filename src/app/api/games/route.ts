@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     
-    // Añadimos "genre" a la consulta SQL
+    
     const query = `
     INSERT INTO "Game" 
     (title, price, "oldPrice", region, stock, image, description, screenshots, os, cpu, ram, gpu, genre, platform)

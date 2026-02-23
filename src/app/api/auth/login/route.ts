@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { pool } from '../../../../lib/db'; // Importamos tu nueva conexión SQL
+import { pool } from '../../../../lib/db'; 
 import jwt from 'jsonwebtoken';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'mi_clave_secreta_super_segura_123';
@@ -16,19 +16,18 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Faltan datos de usuario o contraseña" }, { status: 400 });
     }
 
-    // 1. Buscamos el admin usando SQL puro
-    // IMPORTANTE: Ponemos "Admin" entre comillas porque Postgres es sensible a mayúsculas
+    
     const query = 'SELECT * FROM "Admin" WHERE usuario = $1';
     const result = await pool.query(query, [usuario]);
     
-    const admin = result.rows[0]; // Tomamos el primer resultado que coincida
+    const admin = result.rows[0]; 
 
-    // 2. Comparamos la contraseña 
+    
     if (!admin || admin.clave !== clave) {
       return NextResponse.json({ error: "Usuario o contraseña incorrectos" }, { status: 401 });
     }
 
-    // 3. Generamos el Token JWT si todo está correcto
+    
     const token = jwt.sign(
       { id: admin.id, usuario: admin.usuario, role: 'admin' },
       SECRET_KEY,

@@ -5,7 +5,7 @@ import { jwtVerify } from 'jose';
 const SECRET_KEY = process.env.JWT_SECRET || 'mi_clave_secreta_super_segura_123';
 const secret = new TextEncoder().encode(SECRET_KEY);
 
-// 👇 USAMOS EXPORT DEFAULT PARA QUE NEXT.JS LO DETECTE SIN PROBLEMAS
+
 export default async function proxy(request: NextRequest) {
   const token = request.cookies.get('adminToken')?.value;
   const { pathname } = request.nextUrl;

@@ -27,7 +27,7 @@ export default function CheckoutPage() {
 
   const juego: any = cart[0];
 
-  // Función para cerrar la compra, limpiar el carrito y volver a la tienda
+  
   const handleReturnHome = () => {
     clearCart();
     router.push('/');
@@ -125,7 +125,7 @@ export default function CheckoutPage() {
                     href="https://buy.stripe.com/eVq9ATfni8bA6StevmbV604"
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => setHasClickedPay(true)} // <-- Se activa el cambio al hacer clic
+                    onClick={() => setHasClickedPay(true)} 
                     className="w-full bg-white hover:bg-gray-100 text-gray-900 font-black py-5 px-4 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 shadow-[0_10px_25px_rgba(255,255,255,0.1)] hover:shadow-[0_10px_35px_rgba(255,255,255,0.2)] hover:-translate-y-1 active:scale-95 text-xl overflow-hidden border-2 border-transparent hover:border-[#635BFF]"
                   >
                     <span className="tracking-wide relative z-10">PAGAR CON</span>
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
         <Footer />
       </div>
 
-      {/* 🚀 EL GRAN MODAL DE ÉXITO */}
+      {/*  EL GRAN MODAL DE ÉXITO */}
       <AnimatePresence>
         {showSuccessModal && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">

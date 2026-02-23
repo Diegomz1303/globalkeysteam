@@ -19,7 +19,7 @@ interface CartStore {
   closeCart: () => void;
 }
 
-// Variable para controlar el tiempo de la notificación
+
 let toastTimeout: NodeJS.Timeout;
 
 export const useCart = create<CartStore>()(
@@ -33,7 +33,7 @@ export const useCart = create<CartStore>()(
         set((state) => {
           const yaExiste = state.cart.find((item) => item.id === game.id);
           return { 
-            // Sumamos el juego al carrito en lugar de reemplazarlo
+            
             cart: yaExiste ? state.cart : [...state.cart, game],
             toastMessage: yaExiste ? `¡${game.title} ya estaba en el carrito!` : `¡Agregado: ${game.title}!`
           };

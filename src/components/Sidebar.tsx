@@ -27,7 +27,7 @@ export default function Sidebar({
 
   const generos = ['Todos', 'Acción', 'Aventura', 'RPG', 'Estrategia', 'Shooter', 'Deportes', 'Terror', 'Indie'];
 
-  // Detectar clics fuera del buscador para cerrar las sugerencias
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -38,19 +38,19 @@ export default function Sidebar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filtrar sugerencias en base a lo que escribe el usuario (máximo 5 resultados)
+ 
   const sugerencias = localQuery.trim() === '' 
     ? [] 
     : games.filter(g => g.title.toLowerCase().includes(localQuery.toLowerCase())).slice(0, 5);
 
-  // Cuando hace clic en una sugerencia
+  
   const handleSelectSuggestion = (title: string) => {
     setLocalQuery(title);
     setSearchQuery(title); 
     setShowSuggestions(false);
   };
 
-  // Cuando presiona "Enter" en el teclado
+  
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setSearchQuery(localQuery); 
@@ -61,7 +61,7 @@ export default function Sidebar({
   return (
     <aside className="w-full lg:w-72 flex-shrink-0 p-6 bg-[#121212] rounded-2xl border border-gray-800/50 shadow-2xl">
       
-      {/* BUSCADOR CON AUTOCOMPLETADO (LIVE SEARCH) */}
+      {/*(LIVE SEARCH) */}
       <div className="mb-8 relative" ref={dropdownRef}>
         <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2">
           <span className="text-[#FF6600]">🔍</span> Buscar Juego

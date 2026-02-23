@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Lista de términos y condiciones (con el JSX corregido para evitar errores)
+  
   const terms = [
     {
       title: "Producto digital",

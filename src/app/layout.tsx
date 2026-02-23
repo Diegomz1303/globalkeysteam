@@ -4,21 +4,21 @@ import "./globals.css"; // <--- ¡ESTA LÍNEA ES VITAL!
 
 const inter = Inter({ subsets: ["latin"] });
 
-// METADATOS PROFESIONALES PARA SEO Y REDES SOCIALES
+
 export const metadata: Metadata = {
-  // 👇 AQUÍ ESTÁ LA LÍNEA NUEVA QUE SOLUCIONA EL WARNING
-  metadataBase: new URL("https://globalkeysteam.com"), // Cambia esto por tu dominio real cuando lo tengas
+  
+  metadataBase: new URL("https://globalkeysteam.com"), 
   
   title: "GlobalKeySteam - Steam Keys al Instante",
   description: "La tienda de Steam Keys más rápida y segura de Latinoamérica. Juegos de PC baratos y entrega inmediata 24/7.",
   openGraph: {
     title: "GlobalKeySteam - Tus Juegos Al Instante",
     description: "Compra tus juegos favoritos de Steam a los mejores precios. ¡Entrega inmediata garantizada!",
-    url: "https://globalkeysteam.com", // Cambia esto por tu dominio real cuando lo tengas
+    url: "https://globalkeysteam.com", 
     siteName: "GlobalKeySteam",
     images: [
       {
-        url: "/logo.png", // Next.js detectará tu logo en la carpeta public
+        url: "/logo.png", 
         width: 1200,
         height: 630,
         alt: "GlobalKeySteam Banner Oficial",
