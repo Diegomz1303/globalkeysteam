@@ -25,6 +25,9 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('Todos');
   const [selectedPlatform, setSelectedPlatform] = useState('Todos');
+  
+  // ESTADO: Letra seleccionada para el filtro A-Z
+  const [selectedLetter, setSelectedLetter] = useState('Todos');
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -32,9 +35,10 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const featuredGames = displayGames.filter((g: any) => (g.stock || 0) > 0).slice(0, 4);
 
+  // Si cambia algún filtro, volvemos a la página 1
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedGenre, selectedPlatform]);
+  }, [searchQuery, selectedGenre, selectedPlatform, selectedLetter]);
 
   useEffect(() => {
     if (featuredGames.length <= 1) return;
@@ -44,12 +48,25 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
     return () => clearInterval(timer);
   }, [featuredGames.length]);
 
+  // Lógica para filtrar por letra y demás filtros
   const filteredGames = displayGames.filter((game: any) => {
     const matchSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchGenre = selectedGenre === 'Todos' || game.genre === selectedGenre;
     const matchPlatform = selectedPlatform === 'Todos' || game.platform === selectedPlatform;
 
-    return matchSearch && matchGenre && matchPlatform;
+    // Filtro A-Z
+    let matchLetter = true;
+    if (selectedLetter !== 'Todos') {
+      const firstChar = game.title.charAt(0).toUpperCase();
+      if (selectedLetter === '#') {
+        // Coincide con juegos que empiezan por número u otro símbolo
+        matchLetter = /^[0-9\W]/.test(firstChar);
+      } else {
+        matchLetter = firstChar === selectedLetter;
+      }
+    }
+
+    return matchSearch && matchGenre && matchPlatform && matchLetter;
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -62,11 +79,13 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Generamos el abecedario dinámicamente: ['Todos', '#', 'A', 'B', 'C', ...]
+  const alphabet = ['Todos', '#', ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
+
   return (
     <main className="min-h-screen font-sans selection:bg-[#FF6600] selection:text-white relative bg-[#050505] pt-20">
       <Navbar />
 
-      {/* 🚀 AQUÍ AÑADIMOS LA PROPIEDAD onSelectRelated */}
       {selectedGame && (
         <GameModal 
           juego={selectedGame} 
@@ -225,8 +244,8 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
           />
         </div>
 
-        <div className="flex-1">
-          <div className="flex justify-between items-center mb-8 bg-[#121212] p-4 rounded-2xl border border-gray-800/50 shadow-lg">
+        <div className="flex-1 overflow-hidden">
+          <div className="flex justify-between items-center mb-6 bg-[#121212] p-4 rounded-2xl border border-gray-800/50 shadow-lg">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <span className="inline-block w-2 h-6 bg-[#FF6600] rounded-full shadow-[0_0_10px_rgba(255,102,0,0.5)]"></span>
               {selectedGenre === 'Todos' ? 'Catálogo Completo' : `Género: ${selectedGenre}`}
@@ -234,6 +253,40 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
                 {filteredGames.length}
               </span>
             </h2>
+          </div>
+
+          {/* BARRA ALFABÉTICA (A-Z) SUPER ELEGANTE, PEQUEÑA Y CON SCROLLBAR CUSTOM */}
+          <div className="mb-8 w-full">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-3 select-none snap-x 
+              [&::-webkit-scrollbar]:h-1.5 
+              [&::-webkit-scrollbar-track]:bg-transparent 
+              [&::-webkit-scrollbar-thumb]:bg-gray-800 
+              hover:[&::-webkit-scrollbar-thumb]:bg-[#FF6600] 
+              [&::-webkit-scrollbar-thumb]:rounded-full transition-colors"
+            >
+              {alphabet.map((letter) => (
+                <button
+                  key={letter}
+                  onClick={() => setSelectedLetter(letter)}
+                  className={`
+                    relative min-w-[32px] h-8 px-2 rounded-lg font-bold flex items-center justify-center text-xs transition-all duration-300 snap-start shrink-0
+                    ${selectedLetter === letter 
+                      ? 'text-white' 
+                      : 'text-gray-400 bg-[#121212] border border-gray-800 hover:border-gray-500 hover:text-white'}
+                  `}
+                >
+                  {/* Animación fluida de fondo naranja */}
+                  {selectedLetter === letter && (
+                    <motion.div 
+                      layoutId="activeAlphabetFilter"
+                      className="absolute inset-0 bg-[#FF6600] rounded-lg shadow-[0_0_10px_rgba(255,102,0,0.4)] z-0"
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    />
+                  )}
+                  <span className="relative z-10">{letter}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <motion.div layout className="space-y-4">
@@ -252,8 +305,20 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
                   </motion.div>
                 ))
               ) : (
-                <div className="text-center py-20 bg-[#121212] border border-gray-800 rounded-2xl">
-                  <p className="text-xl font-bold text-gray-300">No hay juegos que coincidan 👻</p>
+                <div className="text-center py-20 bg-[#121212] border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
+                  <span className="text-5xl mb-4">👻</span>
+                  <p className="text-xl font-bold text-gray-300">No hay juegos que coincidan</p>
+                  <button 
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedGenre('Todos');
+                      setSelectedPlatform('Todos');
+                      setSelectedLetter('Todos');
+                    }}
+                    className="mt-4 text-[#FF6600] hover:text-white underline font-bold transition-colors"
+                  >
+                    Limpiar todos los filtros
+                  </button>
                 </div>
               )}
             </AnimatePresence>
