@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true, // <--- Esta es la única línea nueva añadida para solucionar tu error
     remotePatterns: [
       {
         protocol: 'https',
