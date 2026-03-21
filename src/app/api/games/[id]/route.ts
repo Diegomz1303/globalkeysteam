@@ -27,8 +27,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const query = `
       UPDATE "Game" 
       SET title = $1, price = $2, region = $3, stock = $4, image = $5, 
-          description = $6, genre = $7, platform = $8
-      WHERE id = $9 RETURNING *
+          description = $6, genre = $7, platform = $8, "stripeLink" = $9, "isFeatured" = $10
+      WHERE id = $11 RETURNING *
     `;
     
     const values = [
@@ -40,6 +40,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       body.description, 
       body.genre || 'Acción', 
       body.platform || 'Steam', 
+      body.stripeLink || null,
+      body.isFeatured || false,
       parseInt(id)
     ];
 

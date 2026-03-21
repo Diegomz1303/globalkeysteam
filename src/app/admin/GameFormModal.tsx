@@ -19,7 +19,9 @@ export default function GameFormModal({ onClose, onSuccess, gameToEdit }: GameFo
   const [formData, setFormData] = useState({
     title: '', price: '', region: 'GLOBAL', stock: '10', image: '', description: '', 
     genre: 'Acción', 
-    platform: 'Steam' 
+    platform: 'Steam',
+    stripeLink: '',
+    isFeatured: false
   });
 
   useEffect(() => {
@@ -32,7 +34,9 @@ export default function GameFormModal({ onClose, onSuccess, gameToEdit }: GameFo
         image: gameToEdit.image, 
         description: gameToEdit.description,
         genre: gameToEdit.genre || 'Acción', 
-        platform: gameToEdit.platform || 'Steam' 
+        platform: gameToEdit.platform || 'Steam',
+        stripeLink: gameToEdit.stripeLink || '',
+        isFeatured: gameToEdit.isFeatured || false
       });
     }
   }, [gameToEdit]);
@@ -233,6 +237,41 @@ export default function GameFormModal({ onClose, onSuccess, gameToEdit }: GameFo
                   <option value="Terror">Terror</option>
                   <option value="Indie">Indie</option>
                 </select>
+              </div>
+
+              <div className="md:col-span-2 mt-4">
+                <h3 className="text-[#FF6600] font-bold uppercase tracking-wider text-sm mb-4 border-b border-gray-800 pb-2">Configuración Especial de Ventas</h3>
+              </div>
+              
+              <div>
+                <label className="block text-gray-400 text-sm font-bold mb-1">Plantilla Rápida de Precio y Link</label>
+                <select 
+                  onChange={(e) => {
+                    if (e.target.value === '33') {
+                      setFormData({...formData, price: '33', stripeLink: 'https://buy.stripe.com/eVq9ATfni8bA6StevmbV604'});
+                    } else if (e.target.value === '50') {
+                      setFormData({...formData, price: '50', stripeLink: 'https://buy.stripe.com/eVqfZhb72fE2gt372UbV605'});
+                    }
+                  }} 
+                  className="w-full bg-[#0a0a0a] border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-[#FF6600] outline-none transition-colors"
+                >
+                  <option value="">-- Seleccionar o Personalizado --</option>
+                  <option value="33">Estándar (33 Soles)</option>
+                  <option value="50">Premium (50 Soles)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm font-bold mb-1">Enlace de Stripe (Checkout)</label>
+                <input type="text" value={formData.stripeLink} onChange={(e) => setFormData({...formData, stripeLink: e.target.value})} className="w-full bg-[#0a0a0a] border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-[#FF6600] outline-none transition-colors" placeholder="https://buy.stripe.com/..." />
+              </div>
+
+              <div className="md:col-span-2 flex items-center gap-3 bg-[#0a0a0a] border border-gray-700 p-4 rounded-xl mb-4">
+                <input type="checkbox" id="isFeatured" checked={formData.isFeatured} onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})} className="w-6 h-6 accent-[#FF6600] cursor-pointer" />
+                <label htmlFor="isFeatured" className="text-white font-bold cursor-pointer select-none">
+                  ⭐ Destacar este juego en el Banner Principal
+                </label>
+                <p className="text-gray-500 text-xs ml-auto hidden md:block">Aparecerá en el slider inicial de la tienda.</p>
               </div>
 
               <div className="md:col-span-2">

@@ -33,7 +33,10 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
   const itemsPerPage = 10;
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const featuredGames = displayGames.filter((g: any) => (g.stock || 0) > 0).slice(0, 4);
+  const featuredGames = [...displayGames]
+    .filter((g: any) => (g.stock || 0) > 0)
+    .sort((a: any, b: any) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0))
+    .slice(0, 4);
 
   // Si cambia algún filtro, volvemos a la página 1
   useEffect(() => {

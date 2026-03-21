@@ -122,7 +122,7 @@ export default function CheckoutPage() {
                 {/* LÓGICA DE CAMBIO DE BOTÓN */}
                 {!hasClickedPay ? (
                   <a 
-                    href="https://buy.stripe.com/eVq9ATfni8bA6StevmbV604"
+                    href={juego.stripeLink || "https://buy.stripe.com/eVq9ATfni8bA6StevmbV604"}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setHasClickedPay(true)} 

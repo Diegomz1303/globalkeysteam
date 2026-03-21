@@ -25,8 +25,8 @@ export async function POST(req: Request) {
     
     const query = `
     INSERT INTO "Game" 
-    (title, price, "oldPrice", region, stock, image, description, screenshots, genre, platform)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    (title, price, "oldPrice", region, stock, image, description, screenshots, genre, platform, "stripeLink", "isFeatured")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     RETURNING *
     `;
     
@@ -40,7 +40,9 @@ export async function POST(req: Request) {
       body.description, 
       body.screenshots || '', 
       body.genre || 'Acción', 
-      body.platform || 'Steam'
+      body.platform || 'Steam',
+      body.stripeLink || null,
+      body.isFeatured || false
     ];
 
     const result = await pool.query(query, values);

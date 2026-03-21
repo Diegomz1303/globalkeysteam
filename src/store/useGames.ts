@@ -15,7 +15,9 @@ export interface Game {
   ram?: string | null;
   gpu?: string | null;
   genre: string;     
-  platform: string;  
+  platform: string;
+  stripeLink?: string;
+  isFeatured?: boolean;
 }
 
 interface GamesStore {

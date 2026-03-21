@@ -44,15 +44,19 @@ export const useCurrency = create<CurrencyStore>()(
         if (currency === 'PEN') {
           return `S/ ${price.toFixed(2)}`;
         } else {
+          let priceCOP;
           
-          const priceCOP = price * 1104.515; 
-          
+          if (price === 50) {
+            priceCOP = 52000;
+          } else if (price === 33) {
+            priceCOP = 36449;
+          } else {
+            priceCOP = price * 1104.515;
+          }
           
           const roundedCOP = Math.round(priceCOP);
           
-          
           const formattedCOP = roundedCOP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-          
           
           return `$${formattedCOP} COP`;
         }

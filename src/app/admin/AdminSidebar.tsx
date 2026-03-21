@@ -26,7 +26,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onLogout, isOpen
       </AnimatePresence>
 
       {/* SIDEBAR */}
-      <aside className={`fixed md:relative top-0 left-0 h-full w-64 md:w-64 bg-[#121212] border-r border-gray-800 flex flex-col shadow-2xl z-50 transition-transform duration-300 ease-in-out flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      <aside className={`fixed md:relative top-0 left-0 h-full w-64 md:w-64 bg-[#0a0a0a]/80 backdrop-blur-2xl border-r border-gray-800 flex flex-col shadow-[20px_0_60px_rgba(0,0,0,0.5)] z-50 transition-transform duration-300 ease-in-out flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         
         <div className="p-6 border-b border-gray-800 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -45,13 +45,13 @@ export default function AdminSidebar({ activeTab, setActiveTab, onLogout, isOpen
           </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
-          <button onClick={() => { setActiveTab('dashboard'); setIsOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-300 ${activeTab === 'dashboard' ? 'bg-[#FF6600] text-white shadow-[0_0_15px_rgba(255,102,0,0.3)]' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
+        <nav className="flex-1 p-4 space-y-3 overflow-y-auto custom-scrollbar mt-4">
+          <button onClick={() => { setActiveTab('dashboard'); setIsOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold transition-all duration-300 ${activeTab === 'dashboard' ? 'bg-gradient-to-r from-[#FF6600] to-orange-500 text-white shadow-[0_0_20px_rgba(255,102,0,0.4)] translate-x-1' : 'text-gray-400 hover:bg-gray-800/80 hover:text-white'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
             Dashboard
           </button>
           
-          <button onClick={() => { setActiveTab('productos'); setIsOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-300 ${activeTab === 'productos' ? 'bg-[#FF6600] text-white shadow-[0_0_15px_rgba(255,102,0,0.3)]' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
+          <button onClick={() => { setActiveTab('productos'); setIsOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold transition-all duration-300 ${activeTab === 'productos' ? 'bg-gradient-to-r from-[#FF6600] to-orange-500 text-white shadow-[0_0_20px_rgba(255,102,0,0.4)] translate-x-1' : 'text-gray-400 hover:bg-gray-800/80 hover:text-white'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
             Productos
           </button>

@@ -122,15 +122,42 @@ export default function AdminDashboard() {
           {activeTab === 'dashboard' && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <h2 className="text-2xl md:text-3xl font-black mb-6 border-b border-gray-800 pb-4">Resumen General</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                <div className="bg-[#121212] border border-gray-800 p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-gray-400 font-bold mb-2">Total de Juegos</h3>
-                  <p className="text-4xl md:text-5xl font-black text-white">{games.length}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mt-2">
+                <div className="bg-[#121212] border border-gray-800 p-6 rounded-2xl shadow-lg relative overflow-hidden group hover:border-gray-600 transition-colors">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
+                  <h3 className="text-gray-400 font-bold mb-2 relative z-10 text-sm tracking-wider uppercase">Catálogo</h3>
+                  <p className="text-4xl md:text-5xl font-black text-white relative z-10">{games.length} <span className="text-base font-medium text-gray-500">títulos</span></p>
                 </div>
-                <div className="bg-[#121212] border border-gray-800 p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-gray-400 font-bold mb-2">Stock en Sistema</h3>
-                  <p className="text-4xl md:text-5xl font-black text-[#FF6600]">
-                    {games.reduce((acc, g) => acc + (g.stock || 0), 0)}
+                
+                <div className="bg-[#121212] border border-gray-800 p-6 rounded-2xl shadow-lg relative overflow-hidden group hover:border-[#FF6600]/50 transition-colors">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 text-[#FF6600] group-hover:opacity-20 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  </div>
+                  <h3 className="text-gray-400 font-bold mb-2 relative z-10 text-sm tracking-wider uppercase">Stock Global</h3>
+                  <p className="text-4xl md:text-5xl font-black text-[#FF6600] relative z-10">
+                    {games.reduce((acc, g) => acc + (g.stock || 0), 0)} <span className="text-base font-medium text-orange-500/50">u.</span>
+                  </p>
+                </div>
+
+                <div className="bg-[#121212] border border-gray-800 p-6 rounded-2xl shadow-lg relative overflow-hidden group hover:border-yellow-500/50 transition-colors">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 text-yellow-500 group-hover:opacity-20 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                  <h3 className="text-gray-400 font-bold mb-2 relative z-10 text-sm tracking-wider uppercase">Destacados</h3>
+                  <p className="text-4xl md:text-5xl font-black text-yellow-500 relative z-10">
+                    {games.filter(g => g.isFeatured).length} <span className="text-base font-medium text-yellow-500/50">en portada</span>
+                  </p>
+                </div>
+
+                <div className="bg-[#121212] border border-gray-800 p-6 rounded-2xl shadow-lg relative overflow-hidden group hover:border-green-500/50 transition-colors">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 text-green-500 group-hover:opacity-20 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <h3 className="text-gray-400 font-bold mb-2 relative z-10 text-sm tracking-wider uppercase">Valor Inventario</h3>
+                  <p className="text-3xl md:text-4xl font-black text-green-500 relative z-10 mt-1">
+                    {formatPrice(games.reduce((acc, g) => acc + ((g.stock || 0) * (g.price || 0)), 0))}
                   </p>
                 </div>
               </div>
@@ -148,15 +175,16 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-                  <div className="relative w-full sm:w-64 flex-shrink-0">
+                  <div className="relative w-full sm:w-64 flex-shrink-0 group">
+                    <div className="absolute inset-0 bg-[#FF6600]/20 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <input 
                       type="text" 
                       placeholder="Buscar producto..."
                       value={searchTermAdmin}
                       onChange={(e) => setSearchTermAdmin(e.target.value)}
-                      className="w-full bg-[#121212] border border-gray-700 rounded-xl px-4 py-3 pl-10 text-sm focus:border-[#FF6600] outline-none transition-all"
+                      className="w-full relative bg-[#121212] border border-gray-700 rounded-xl px-4 py-3 pl-11 text-sm focus:border-[#FF6600] focus:ring-1 focus:ring-[#FF6600] outline-none transition-all shadow-inner"
                     />
-                    <svg className="w-4 h-4 text-gray-500 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <svg className="w-5 h-5 text-gray-500 absolute left-3.5 top-3.5 group-hover:text-[#FF6600] transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                   </div>
 
                   <button 
@@ -192,20 +220,36 @@ export default function AdminDashboard() {
                               <img src={juego.image || '/logo.png'} alt="" className="w-full h-full object-cover" />
                             </div>
                             <div className="truncate w-full pr-2">
-                              <p className="font-bold text-white text-xs md:text-base truncate">{juego.title}</p>
-                              <p className="text-[9px] md:text-[10px] text-gray-500 uppercase font-black">{juego.genre || 'General'}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-white text-xs md:text-base truncate">{juego.title}</p>
+                                {juego.isFeatured && (
+                                  <span className="text-yellow-500 text-xs drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" title="Destacado en portada">⭐</span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[9px] md:text-[10px] text-gray-400 uppercase font-black bg-gray-900 border border-gray-800 px-1.5 py-0.5 rounded">{juego.genre || 'General'}</span>
+                                <span className="text-[9px] md:text-[10px] text-[#FF6600] uppercase font-black bg-[#FF6600]/10 border border-[#FF6600]/20 px-1.5 py-0.5 rounded">{juego.region || 'GLOBAL'}</span>
+                              </div>
                             </div>
                           </div>
                           
                           <motion.div 
                             key={currency} 
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} 
-                            className="col-span-3 md:col-span-2 font-black text-[#FF6600] text-xs md:text-base truncate"
+                            className="col-span-3 md:col-span-2 font-black text-gray-200 text-xs md:text-base truncate"
                           >
                             {formatPrice(juego.price)}
                           </motion.div>
 
-                          <div className="hidden md:block md:col-span-2 font-bold text-gray-400 text-sm">{juego.stock || 0} u.</div>
+                          <div className="hidden md:flex md:col-span-2 items-center">
+                            {juego.stock > 5 ? (
+                              <span className="bg-green-500/10 text-green-500 border border-green-500/20 px-2 py-1 rounded-lg text-xs font-black shadow-[0_0_10px_rgba(34,197,94,0.1)]">{juego.stock} disp.</span>
+                            ) : juego.stock > 0 ? (
+                              <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-1 rounded-lg text-xs font-black shadow-[0_0_10px_rgba(234,179,8,0.1)]">{juego.stock} bajo</span>
+                            ) : (
+                              <span className="bg-red-500/10 text-red-500 border border-red-500/20 px-2 py-1 rounded-lg text-xs font-black shadow-[0_0_10px_rgba(239,68,68,0.1)]">Agotado</span>
+                            )}
+                          </div>
                           
                           <div className="col-span-3 md:col-span-2 flex justify-center gap-1.5 md:gap-2">
                             <button onClick={() => openEditModal(juego)} className="p-1.5 md:p-2.5 bg-blue-500/10 text-blue-400 rounded-lg md:rounded-xl hover:bg-blue-500 hover:text-white transition-all" title="Editar">
