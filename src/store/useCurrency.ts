@@ -47,7 +47,7 @@ export const useCurrency = create<CurrencyStore>()(
           let priceCOP;
           
           if (price === 50) {
-            priceCOP = 52000;
+            priceCOP = 53000;
           } else if (price === 33) {
             priceCOP = 36449;
           } else {

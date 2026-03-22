@@ -11,12 +11,15 @@ interface SidebarProps {
   setSelectedGenre: (genre: string) => void;
   selectedPlatform: string;
   setSelectedPlatform: (platform: string) => void;
+  selectedPrice?: string;
+  setSelectedPrice?: (price: string) => void;
 }
 
 export default function Sidebar({ 
   searchQuery, setSearchQuery, 
   selectedGenre, setSelectedGenre,
-  selectedPlatform, setSelectedPlatform
+  selectedPlatform, setSelectedPlatform,
+  selectedPrice, setSelectedPrice
 }: SidebarProps) {
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -135,6 +138,47 @@ export default function Sidebar({
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+      </div>
+
+      {/* FILTROS RÁPIDOS DE PRECIO */}
+      <div className="mb-8">
+        <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-xs flex items-center gap-2 border-b border-gray-800 pb-2">
+          <span className="text-[#FF6600]">💎</span> Opciones de Precio
+        </h3>
+        <div className="flex flex-col gap-2.5">
+          <button 
+            onClick={() => setSelectedPrice && setSelectedPrice(selectedPrice === '33' ? 'Todos' : '33')}
+            className={`w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-300 ${
+              selectedPrice === '33' 
+                ? 'bg-gradient-to-r from-[#FF6600] to-orange-500 text-white shadow-[0_4px_15px_rgba(255,102,0,0.4)] border-transparent scale-[1.02]' 
+                : 'bg-black/40 text-gray-400 border border-gray-800 hover:border-gray-500 hover:text-white hover:bg-black/60'
+            }`}
+          >
+            <span className="flex items-center gap-2">✨ Estándar</span>
+            <span className="bg-black/50 px-2.5 py-1 rounded-lg text-white">{formatPrice(33)}</span>
+          </button>
+          
+          <button 
+            onClick={() => setSelectedPrice && setSelectedPrice(selectedPrice === '50' ? 'Todos' : '50')}
+            className={`w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-300 ${
+              selectedPrice === '50' 
+                ? 'bg-gradient-to-r from-yellow-500 to-amber-600 text-white shadow-[0_4px_15px_rgba(234,179,8,0.4)] border-transparent scale-[1.02]' 
+                : 'bg-black/40 text-gray-400 border border-gray-800 hover:border-gray-500 hover:text-white hover:bg-black/60'
+            }`}
+          >
+            <span className="flex items-center gap-2">👑 Premium</span>
+            <span className="bg-black/50 px-2.5 py-1 rounded-lg text-white">{formatPrice(50)}</span>
+          </button>
+
+          {selectedPrice && selectedPrice !== 'Todos' && (
+            <button 
+              onClick={() => setSelectedPrice && setSelectedPrice('Todos')}
+              className="text-xs text-center text-gray-400 hover:text-[#FF6600] uppercase font-bold mt-2 bg-transparent"
+            >
+              × Quitar filtro
+            </button>
+          )}
         </div>
       </div>
 

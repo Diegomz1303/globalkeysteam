@@ -28,6 +28,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
   
   // ESTADO: Letra seleccionada para el filtro A-Z
   const [selectedLetter, setSelectedLetter] = useState('Todos');
+  const [selectedPrice, setSelectedPrice] = useState('Todos');
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -41,7 +42,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
   // Si cambia algún filtro, volvemos a la página 1
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedGenre, selectedPlatform, selectedLetter]);
+  }, [searchQuery, selectedGenre, selectedPlatform, selectedLetter, selectedPrice]);
 
   useEffect(() => {
     if (featuredGames.length <= 1) return;
@@ -56,6 +57,9 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
     const matchSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchGenre = selectedGenre === 'Todos' || game.genre === selectedGenre;
     const matchPlatform = selectedPlatform === 'Todos' || game.platform === selectedPlatform;
+    
+    // Filtro Precio
+    const matchPrice = selectedPrice === 'Todos' || game.price.toString() === selectedPrice;
 
     // Filtro A-Z
     let matchLetter = true;
@@ -69,7 +73,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
       }
     }
 
-    return matchSearch && matchGenre && matchPlatform && matchLetter;
+    return matchSearch && matchGenre && matchPlatform && matchLetter && matchPrice;
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -97,7 +101,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
         />
       )}
 
-      {/* HERO SECTION CON BANNER ESTILO G2A */}
+      {/* HERO SECTION CON BANNER ENEBA/G2A STYLE (FULL FADE) */}
       <div className="relative pt-4 pb-12 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-[#FF6600]/20 blur-[120px] rounded-full pointer-events-none opacity-40 z-0"></div>
         
@@ -112,7 +116,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
           </div>
 
           {featuredGames.length > 0 ? (
-            <div className="relative w-full max-w-6xl mx-auto h-[350px] md:h-[450px] rounded-[2rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-gray-800 group">
+            <div className="relative w-full max-w-6xl mx-auto h-[480px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-gray-800/80 group bg-[#050505]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
@@ -122,39 +126,72 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
                   transition={{ duration: 0.8 }}
                   className="absolute inset-0 w-full h-full"
                 >
+                  {/* Fondo ambiental súper difuminado para iluminar y dar color de fondo base */}
                   <div className="absolute inset-0 bg-black z-0">
-                    <img src={featuredGames[currentSlide].image} alt="Background" className="w-full h-full object-cover opacity-40 blur-md scale-110" />
+                    <img src={featuredGames[currentSlide].image} alt="Ambient" className="w-full h-full object-cover opacity-50 blur-[60px] scale-125 saturate-200" />
                   </div>
                   
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent z-10"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent z-10"></div>
+                  {/* Filtro oscuro oscuro detrás de los textos para legibilidad sobre el fondo ambiental */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent z-10 w-full md:w-[70%]"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-10 w-full md:hidden"></div>
 
-                  <div className="absolute inset-0 z-20 flex items-center justify-between p-6 md:p-16">
-                    
-                    <div className="w-full md:w-1/2 flex flex-col items-start justify-end h-full md:justify-center relative z-20 pb-4 md:pb-0">
+                  {/* IMAGEN DE CARÁTULA PRINCIPAL FUNDIÉNDOSE CON MÁSCARA CSS (Fusión perfecta sin líneas) */}
+                  <div className="absolute inset-0 w-full h-full z-10 flex justify-end pointer-events-none">
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="relative w-full md:w-[75%] h-full"
+                      style={{ 
+                        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%, black 100%)', 
+                        maskImage: 'linear-gradient(to right, transparent 0%, black 25%, black 100%)' 
+                      }}
+                    >
+                       <div 
+                         className="w-full h-full" 
+                         style={{ 
+                           WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 50%)', 
+                           maskImage: 'linear-gradient(to top, transparent 0%, black 50%)' 
+                         }}
+                       >
+                         <img 
+                           src={featuredGames[currentSlide].image} 
+                           alt="Cover" 
+                           className="w-full h-full object-cover object-top md:object-right-top transition-transform duration-1000 ease-out group-hover:scale-[1.02] pointer-events-auto cursor-pointer" 
+                           onClick={() => setSelectedGame(featuredGames[currentSlide])}
+                         />
+                       </div>
+                    </motion.div>
+                  </div>
+
+                  {/* TEXTOS Y BOTÓN */}
+                  <div className="absolute inset-0 z-20 flex flex-col items-start justify-end md:justify-center p-6 sm:p-10 md:p-16 pointer-events-none">
+                    <div className="w-full md:w-[60%] flex flex-col items-start relative z-20 pb-6 md:pb-0 pointer-events-auto">
+                      
                       <motion.span 
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                        className="bg-[#FF6600] text-white text-[10px] md:text-xs font-black uppercase px-4 py-1.5 rounded-full mb-4 tracking-wider shadow-[0_0_15px_rgba(255,102,0,0.5)]"
+                        className="bg-gradient-to-r from-[#FF6600] to-orange-500 text-white text-[10px] md:text-xs font-black uppercase px-4 py-1.5 rounded-full mb-3 tracking-wider shadow-[0_0_15px_rgba(255,102,0,0.5)]"
                       >
                         🔥 DESTACADO
                       </motion.span>
                       
                       <motion.h2 
                         initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
-                        className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-2xl line-clamp-2 max-w-[80%] md:max-w-full"
+                        className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-none md:leading-tight drop-shadow-2xl uppercase italic"
+                        style={{ textShadow: "0px 4px 25px rgba(0,0,0,0.8)" }}
                       >
                         {featuredGames[currentSlide].title}
                       </motion.h2>
                       
                       <motion.div 
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-                        className="flex items-center gap-4 mb-8"
+                        className="flex items-center gap-3 md:gap-5 mb-5 md:mb-8 bg-black/40 p-3 md:p-4 rounded-xl backdrop-blur-md border border-white/5 w-fit shadow-xl"
                       >
-                        <span suppressHydrationWarning className="text-3xl md:text-4xl font-black text-[#FF6600] drop-shadow-lg">
+                        <span suppressHydrationWarning className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FF6600] drop-shadow-lg leading-none">
                           {formatPrice(featuredGames[currentSlide].price)}
                         </span>
                         {featuredGames[currentSlide].oldPrice && (
-                          <span suppressHydrationWarning className="text-gray-400 line-through font-bold text-xl">
+                          <span suppressHydrationWarning className="text-gray-400 line-through font-bold text-lg md:text-xl leading-none">
                             {formatPrice(featuredGames[currentSlide].oldPrice)}
                           </span>
                         )}
@@ -163,34 +200,22 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
                       <motion.button 
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                         onClick={() => setSelectedGame(featuredGames[currentSlide])}
-                        className="bg-white text-black hover:bg-gray-200 font-black py-4 px-8 rounded-xl transition-all active:scale-95 flex items-center gap-3 uppercase tracking-wide shadow-xl"
+                        className="bg-white text-black hover:bg-gray-200 font-black py-4 px-8 md:py-4 md:px-10 rounded-xl transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-3 uppercase tracking-wider shadow-[0_10px_30px_rgba(255,102,0,0.3)] text-sm md:text-base w-full sm:w-auto justify-center"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         Ver Oferta
                       </motion.button>
                     </div>
-                    
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.8, rotate: -5 }} 
-                      animate={{ opacity: 1, scale: 1, rotate: 2 }} 
-                      transition={{ delay: 0.2, type: "spring" }}
-                      className="absolute right-[-10px] top-6 w-[130px] h-[180px] opacity-80 md:opacity-100 md:relative md:right-0 md:top-0 md:w-5/12 md:h-full md:py-4 z-10"
-                    >
-                       <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-white/10 group-hover:rotate-0 group-hover:scale-105 transition-all duration-700 ease-out cursor-pointer" onClick={() => setSelectedGame(featuredGames[currentSlide])}>
-                          <Image src={featuredGames[currentSlide].image} alt="Cover" fill className="object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 md:from-black/60 to-transparent"></div>
-                       </div>
-                    </motion.div>
                   </div>
                 </motion.div>
               </AnimatePresence>
 
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+              <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
                 {featuredGames.map((_: any, idx: number) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`h-2.5 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-[#FF6600] w-8 shadow-[0_0_10px_rgba(255,102,0,0.8)]' : 'bg-white/30 w-2.5 hover:bg-white/60'}`}
+                    className={`h-2 md:h-2.5 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-[#FF6600] w-6 md:w-8 shadow-[0_0_10px_rgba(255,102,0,0.8)]' : 'bg-white/30 w-2 md:w-2.5 hover:bg-white/60'}`}
                     aria-label={`Ir al slide ${idx + 1}`}
                   />
                 ))}
@@ -244,6 +269,8 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
             setSelectedGenre={setSelectedGenre}
             selectedPlatform={selectedPlatform}
             setSelectedPlatform={setSelectedPlatform}
+            selectedPrice={selectedPrice}
+            setSelectedPrice={setSelectedPrice}
           />
         </div>
 
@@ -317,6 +344,7 @@ export default function HomeClient({ initialGames }: { initialGames: any[] }) {
                       setSelectedGenre('Todos');
                       setSelectedPlatform('Todos');
                       setSelectedLetter('Todos');
+                      setSelectedPrice('Todos');
                     }}
                     className="mt-4 text-[#FF6600] hover:text-white underline font-bold transition-colors"
                   >
